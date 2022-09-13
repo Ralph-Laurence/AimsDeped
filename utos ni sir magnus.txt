@@ -1,0 +1,49 @@
+Auto detect role on login
+Create insert student from adviser
+Drop down na yung Birth order
+
+no. siblings, educ attain -> dropdown inputs nalang
+
+school coord assign teacher
+how student gets delegated to teacher
+
+lrn name student grade level -> teacher will identify herself as adviser ni student
+in real use, meron tayong thousand of students 
+
+task: teacher can select from list of students then identify herself as adviser
+first com first serv si teacher -> 
+pag nagkamali si teacher na nakuha nya yung bata
+the other teacher makikita yung kung sino kumuha dun sa bata 
+
+coordinator can see the list of teachers in his school 
+he can select / desselect teacher 
+he can add teacher 
+ha can remove teacher 
+kung sino yung sinelect nya na may advisory sila lang makakaaccess sa system 
+kung teacher ka pero wala ka advisory dapat di ka makalogin sa system 
+
+only those teacher na sinelect ni coordinator ang makaaccess sa system 
+coordinator can change his password
+
+sdo can create accounts for school coords
+or he can create from csv from upload
+then accounts will be created from csv file
+
+di kelangan perfect basta demo lang how it works ok na yun 
+
+if we start from sdo we will let supervisor ng dagups then ipasubok sakanya maginput ng create accs of coordinator 
+ng certain school 
+
+we can ask those participant to log in using the account na ginawa nila 
+
+
+
+TOP TASK
+
+-student edit profile
+-teacher can select students na
+
+dont worry sa ui
+
+dropdown educ attain 
+dropdown siblings 
