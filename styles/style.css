@@ -1,0 +1,237 @@
+body{
+    background-color: #f8f7ff;
+    color : #001233
+}
+#side_nav{
+    position: relative;
+    background: darkblue;
+    min-width: 290px;
+    max-width: 290px;
+    transition: all 0.5s;
+}
+#side_nav.show{
+    margin-left: -290px;
+}
+.content{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+#logout_btn{
+    background: white;
+    color : rgba(0,0,0,.7);
+    border: none;
+    border-radius: 2px;
+}
+.logout_label{
+    font-size: 15px;
+}
+#logout_btn i{
+    font-size: 20px;
+    color : #001233
+}
+.toggle-button{
+    position: absolute;
+    width: 50px;
+    top: .7rem;
+    right: -50px;
+    background: white;
+    color: #001233;
+    border-radius: 0 5px 5px 0;
+    font-size: 24px;
+    height: fit-content;
+    padding: 6px 8px;
+    cursor: pointer;
+}
+.header-box img{
+    width: 140px;
+    object-fit: fill;
+}
+hr.h-color{
+    height: 2px;
+    background-color: #eee;
+}
+.sidebar li{
+    height : 48px;
+    cursor: pointer;
+    margin: 12px 0;
+    border-radius: 8px;
+}
+.sidebar li:hover{
+    background-color: #eee;
+    color: #001233;
+    border-radius: 8px;
+    transition: .2s ease-in-out;
+}
+.sidebar li:hover a {
+    color: #001233;
+    border-radius: 8px;
+    transition: .2s ease-in-out;
+}
+.sidebar li.active{
+    background-color: #f8f7ff;
+    border-radius: 8px;
+}
+.sidebar li a{
+    font-size: 15px;
+    pointer-events: none;
+}
+.sidebar li a i{
+    margin-right: 8px ;
+}
+.sidebar li.active a, .sidebar li.active a:hover{
+    color: #001233;
+}
+.sidebar li a{
+    color: #fff;
+}
+/* TOP NAV */
+#nav_top{
+    width: 100%;
+    height: 72px;
+    top: 0;
+    left: 0;
+    border-bottom: 1px solid rgba(0,0,0,.1);
+}
+.top_container{
+    width: 100%;
+    /* margin: auto; */
+}
+.logout_label{
+    margin-right: 4px;
+}
+.search{
+    width: fit-content;
+    height: 54px;
+    background: white;
+    border: 1px solid rgba(0,0,0,.1);
+    border-radius: 30px;
+}
+.search #search_field{
+    width: 300px;
+    height: inherit;
+    border-radius: 30px 0 0 30px;
+    background: transparent;
+
+    outline: none;
+    border:none
+}
+.search #search_submit{
+    width: 50px;
+    height: inherit;
+    background: transparent;
+    border-left: 1px solid rgba(0,0,0,.1);
+    border-radius: 0 8px 8px 0;
+    outline: none;
+    border-top: none;
+    border-right: none;
+    border-bottom: none;
+
+}
+.search #search_submit{
+    font-size: 1.2rem;
+}
+#save_btn{
+    width: 80px;
+    height: 48px;
+    background: none;
+    border: 2px solid darkblue;
+    color: darkblue;
+    border-radius: 8px;
+    outline: none;
+    transition: .4s ease-in-out;
+}
+#save_btn:hover{
+    background: #03045e;
+    color : #f8f7ff;
+}
+.table_container{
+    position: relative;
+}
+#table{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+}
+table{
+    width: 100%;
+    height: 100%;
+    max-height: 80%;
+    overflow-y: auto;
+    font-size: 1rem;
+    /* background: white; */
+}
+table thead{
+    background: darkblue;
+    color: white;
+    position: sticky;
+    left: 0;
+    top: 0;
+}
+table thead tr th{
+    font-weight: 400;
+}
+table tbody tr td{
+    font-weight: 500;
+}
+.div{
+    width: 100px;
+    height: 100px;
+    margin: 10px;
+}
+/* CONFIRM */
+.overlay{
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: rgba(0,0,0,.7);
+    z-index: 1;
+    transition: .6s ease-in-out;
+}
+.overlay.hide{
+    transform: scale(0);
+}
+#confirm_container{
+    width: fit-content;
+    height: fit-content;
+    border-radius: 8px;
+}
+.confirm_cta{
+    width: 120px;
+    height: 48px;
+    border-radius: 8px;
+    border: none;
+    margin-top: 12px;
+    transition: .3s ease-in-out;
+}
+.confirm_cta:first-child{
+    margin-right: 8px;
+    background: #dee2e6;
+}
+.confirm_cta:first-child:hover{
+    background: #6c757d;
+}
+.confirm_cta:last-child{
+    background-color: darkblue;
+}
+.confirm_cta:last-child:hover{
+    background: #03045e;
+}
+#close_confirm{
+    top: 1.3rem;
+    right: 2rem;
+    cursor: pointer;
+}
+#close_confirm:hover{
+    color: #ced4da;
+    transition: .3s ease-in-out;
+}
+#success_icon{
+    font-size: 3rem;
+}
