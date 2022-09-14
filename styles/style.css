@@ -1,16 +1,19 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500&family=Poppins:ital,wght@0,100;0,200;0,500;0,600;1,100;1,200&display=swap');
+
 body{
-    background-color: #f8f7ff;
-    color : #001233
+    background-color: #f9f9f9;
+    color : #001233;
+    font-family: 'Nunito', sans-serif;
 }
 #side_nav{
     position: relative;
     background: darkblue;
-    min-width: 290px;
-    max-width: 290px;
+    min-width: 295px;
+    max-width: 295px;
     transition: all 0.5s;
 }
 #side_nav.show{
-    margin-left: -290px;
+    margin-left: -295px;
 }
 .content{
     width: 100%;
@@ -57,6 +60,8 @@ hr.h-color{
     cursor: pointer;
     margin: 12px 0;
     border-radius: 8px;
+    display: flex;
+    align-items: center;
 }
 .sidebar li:hover{
     background-color: #eee;
@@ -79,6 +84,7 @@ hr.h-color{
 }
 .sidebar li a i{
     margin-right: 8px ;
+    font-size: 19px;
 }
 .sidebar li.active a, .sidebar li.active a:hover{
     color: #001233;
