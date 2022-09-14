@@ -1,0 +1,34 @@
+
+/* Variable values */
+:root
+{
+    --color-primary-override: #2E3190;
+    --color-primary-hover-override: #453190;
+    --color-danger-override: #ED1B24;
+    --color-danger-hover-override: #C21218;
+
+    --drawer-bg-color: #0C1028;
+    --drawer-banner-bg: #080A1A;
+
+    --hover-bg: #E8F0FE;
+
+    --background-light: #F4F6FA;
+    
+    --main-font: "Figtree";
+}
+
+@font-face {
+    font-family: "Figtree";
+    src: url('../fonts/Figtree.ttf');
+}
+
+* {
+    box-sizing: border-box !important;
+}
+
+html, body
+{
+    font-family: var(--main-font) !important;
+    background-color: var(--background-light) !important; 
+    height: 100%;
+}
