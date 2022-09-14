@@ -174,7 +174,8 @@ $doc->BeginHTML();
 
                 <div class="row mb-4">
                     <h5 class="text-primary">Personal Information</h5>
-                </div>
+                </div> 
+                <form class="row needs-validation" method="POST" action="<?php echo $_SERVER["PHP_SELF"]; ?>" novalidate>
                 <?php
                 if ($errCount > 0) 
                 {
@@ -199,7 +200,6 @@ $doc->BeginHTML();
                          </div>";
                 }
                 ?>
-                <form class="row needs-validation" method="POST" action="<?php echo $_SERVER["PHP_SELF"]; ?>" novalidate>
                    <input type="hidden" name="input_userId" value="<?php echo $authCookie["userid"]; ?>" />
                     <!--INPUT GROUP 1-->
                     <div class="row mb-3">
