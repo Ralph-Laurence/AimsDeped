@@ -96,3 +96,62 @@ $(document).ready(function()
         }, false);
     });
 });
+/**
+ * Checks for special fields on document load if
+ * there are contents loaded and the field is readonly,
+ * then make the field editable
+ */ 
+const handTypes = ["Left", "Right", "Ambidextrous"];
+
+function CheckForLoadedSpecialFields()
+{
+    // Birth order field
+    var input_birthOrder = $("#input_birth_order");
+    
+    if (input_birthOrder.val() != "Eldest" && input_birthOrder.val() != "Youngest")
+        unsetInputReadOnly('input_birth_order');
+
+    // Guardian Name
+    if ($("#input_guardianName").val() != "")
+        unsetInputReadOnly("input_guardianName");
+
+    // Guardian Relation
+    if ($("#input_guardianRelation").val() != "")
+        unsetInputReadOnly("input_guardianRelation");
+
+    // Guardian Address
+    if ($("#input_guardianAddress").val() != "")
+        unsetInputReadOnly("input_guardianAddress");
+
+    // Hand Used
+   
+    var handUsed = $("#input_hand_used").val();
+
+    if (handUsed != '' && !inArray(handUsed, handTypes))
+        unsetInputReadOnly("input_hand_used");
+
+    // Hearing Impairment
+    if (!($("#radio_hearing_normal").is(':checked')))
+        unsetInputReadOnly("input_hearing_impair");
+
+    // Speech Impairment
+    if (!($("#radio_speech_normal").is(':checked')) )
+        unsetInputReadOnly("input_speech_impair");
+
+    // Unfocus the last input field
+    $("#input_speech_impair").blur();
+    
+    // Then scroll up 
+
+    $('html, body').animate({scrollTop: 0},
+    {
+        duration: 200,
+        complete: function()
+        {
+            $(".opacity-overlay").fadeTo("800", 1, function()
+            {
+                $(this).removeClass("opacity-overlay")
+            });
+        }
+    });
+}

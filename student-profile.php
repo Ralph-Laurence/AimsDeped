@@ -61,10 +61,8 @@ function setHandTypeText()
     global $handType;
     global $handTypes;
 
-    if (in_array($handType, $handTypes))
-        return;
-
-    echo htmlspecialchars($handType);
+    if (!(in_array($handType, $handTypes)))
+        echo htmlspecialchars($handType);
 }
 
 //
@@ -143,7 +141,7 @@ date_default_timezone_set("Asia/Manila");
 $doc = Singleton::GetBoilerPlateInstance();
 $doc->BeginHTML();
 ?>
-<div class="wrapper w-100">
+<div class="wrapper w-100 opacity-overlay">
 
     <div id="main-content-wrapper" class="main-content-wrapper px-0 px-md-5 w-100">
 
@@ -152,7 +150,7 @@ $doc->BeginHTML();
             <div class="container-fluid">
 
                 <div class="navbar-brand">
-                    <img src="assets/img/deped-logo-m.png" alt="logo" width="144" height="72">
+                    <img src="assets/img/deped-logo-m.png" id="main-logo" alt="logo" width="144" height="72">
                 </div>
 
                 <a href="logout.php" class="btn btn-dark d-inline-flex btn-primary-override btn-rounded justify-content-center align-items-center">
@@ -325,11 +323,7 @@ $doc->BeginHTML();
                             </div>
                         </div>
                         <div class="col">
-                            <!-- <div class="form-outline">
-                                <input type="text" id="input_fathersEduc" name="input_fathersEduc" class="form-control" required value="" />
-                                <label class="form-label" for="input_fathersEduc">Educational Attainment</label>
-                                <div class="invalid-feedback">Please fill out this field.</div>
-                            </div> -->
+                             
                             <div class="btn-group w-100 dropup custom-droplist">
                                 <button class="btn w-100 text-wrap btn-secondary dropdown-toggle fw-bold text-capitalize" type="button" id="father_educ_droplist" data-mdb-toggle="dropdown" aria-haspopup="true" aria-expanded="false" required>
                                     <?php echo htmlspecialchars($res["father_educ"] ?: "Educational Attainment") ?>
@@ -391,11 +385,7 @@ $doc->BeginHTML();
                             </div>
                         </div>
                         <div class="col">
-                            <!-- <div class="form-outline">
-                                <input type="text" id="input_mothersEduc" name="input_mothersEduc" class="form-control" required value="" />
-                                <label class="form-label" for="input_mothersEduc">Educational Attainment</label>
-                                <div class="invalid-feedback">Please fill out this field.</div>
-                            </div> -->
+                             
                             <div class="btn-group w-100 dropup custom-droplist">
                                 <button class="btn w-100 text-wrap btn-secondary dropdown-toggle fw-bold text-capitalize" type="button" id="mother_educ_droplist" data-mdb-toggle="dropdown" aria-haspopup="true" aria-expanded="false" required>
                                     <?php
@@ -455,7 +445,14 @@ $doc->BeginHTML();
                             <span class="fw-bold">Birth Order</span>
                             <div class="btn-group w-100 dropup custom-droplist">
                                 <button class="btn w-100 text-wrap btn-secondary dropdown-toggle fw-bold text-capitalize" type="button" id="birth_order_select_button" name="birth_order" data-mdb-toggle="dropdown" aria-haspopup="true" aria-expanded="false" required>
-                                    <?php echo htmlspecialchars($res["birth_order"]) ?>
+                                    <?php 
+                                        $order = $res["birth_order"];
+                                        $orders = array("Eldest", "Youngest");
+                                        if (!in_array($order, $orders))
+                                            echo "Others";
+                                        else
+                                            echo $order;
+                                    ?>
                                 </button>
                                 <div class="dropdown-menu" aria-labelledby="birth_order_select_button">
 
@@ -505,11 +502,7 @@ $doc->BeginHTML();
                                 </div>
                                 <!-- <input type="hidden" name="input_birth_order"> -->
                             </div>
-                            <!-- <div class="form-outline">
-                                <input type="text" id="input_siblings" name="input_siblings" class="form-control" required value="<?php //echo htmlspecialchars($res["no_siblings"]) ?>" />
-                                <label class="form-label" for="input_siblings"># of Siblings</label>
-                                <div class="invalid-feedback">Please fill out this field.</div>
-                            </div> -->
+                             
                             <input type="hidden" id="input_siblings" name="input_siblings" required value="<?php echo htmlspecialchars($res["no_siblings"]) ?>" />
                         </div>
                     </div>
@@ -760,12 +753,17 @@ $doc->BeginHTML();
     </div>
 
 </div>
-
+<script src="assets/js/student-profile.js"></script>
 <script>
     var mdb_modal = undefined;
 
-    $(document).ready(() => {
+    $(document).ready(() => 
+    {
+        // Initialize Modal Box
         mdb_modal = new mdb.Modal(document.getElementById('mdb-modal'), []);
+
+        // Enable readonly fields 
+        CheckForLoadedSpecialFields();
     });
 
     function ShowMsgBox(title, msg, showCloseButton) {
@@ -786,6 +784,6 @@ $doc->BeginHTML();
         $(".modal-body").text('');
     }
 </script>
-<script src="assets/js/student-profile.js"></script>
+
 
 <?php $doc->EndHTML(); ?>
