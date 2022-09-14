@@ -18,7 +18,7 @@ if (empty($authCookie)) {
     Utils::RedirectTo("login.php");
     exit;
 }
-  
+
 $cond = array("id" => $authCookie["userid"]);
 
 $res = Singleton::GetDbHelperInstance()->SelectRow_Where(Constants::$STUDENTS_TABLE, $cond, true);
@@ -141,7 +141,7 @@ date_default_timezone_set("Asia/Manila");
 $doc = Singleton::GetBoilerPlateInstance();
 $doc->BeginHTML();
 ?>
-<div class="wrapper w-100 opacity-overlay">
+<div class="container-fluid position-relative opacity-overlay">
 
     <div id="main-content-wrapper" class="main-content-wrapper px-0 px-md-5 w-100">
 
@@ -174,12 +174,11 @@ $doc->BeginHTML();
 
                 <div class="row mb-4">
                     <h5 class="text-primary">Personal Information</h5>
-                </div> 
+                </div>
                 <form class="row needs-validation" method="POST" action="<?php echo $_SERVER["PHP_SELF"]; ?>" novalidate>
-                <?php
-                if ($errCount > 0) 
-                {
-                    echo "
+                    <?php
+                    if ($errCount > 0) {
+                        echo "
                          <div class=\"row mt-2\">
                              <div class=\"col\">
                                  <div class=\"alert alert-danger text-center\" role=\"alert\">
@@ -187,10 +186,9 @@ $doc->BeginHTML();
                                  </div>
                              </div>
                          </div>";
-                }
-                if ($successCount > 0) 
-                {
-                    echo "
+                    }
+                    if ($successCount > 0) {
+                        echo "
                          <div class=\"row mt-2\">
                              <div class=\"col\">
                                  <div class=\"alert alert-success text-center\" role=\"alert\">
@@ -198,9 +196,9 @@ $doc->BeginHTML();
                                  </div>
                              </div>
                          </div>";
-                }
-                ?>
-                   <input type="hidden" name="input_userId" value="<?php echo $authCookie["userid"]; ?>" />
+                    }
+                    ?>
+                    <input type="hidden" name="input_userId" value="<?php echo $authCookie["userid"]; ?>" />
                     <!--INPUT GROUP 1-->
                     <div class="row mb-3">
                         <div class="col">
@@ -323,7 +321,7 @@ $doc->BeginHTML();
                             </div>
                         </div>
                         <div class="col">
-                             
+
                             <div class="btn-group w-100 dropup custom-droplist">
                                 <button class="btn w-100 text-wrap btn-secondary dropdown-toggle fw-bold text-capitalize" type="button" id="father_educ_droplist" data-mdb-toggle="dropdown" aria-haspopup="true" aria-expanded="false" required>
                                     <?php echo htmlspecialchars($res["father_educ"] ?: "Educational Attainment") ?>
@@ -385,7 +383,7 @@ $doc->BeginHTML();
                             </div>
                         </div>
                         <div class="col">
-                             
+
                             <div class="btn-group w-100 dropup custom-droplist">
                                 <button class="btn w-100 text-wrap btn-secondary dropdown-toggle fw-bold text-capitalize" type="button" id="mother_educ_droplist" data-mdb-toggle="dropdown" aria-haspopup="true" aria-expanded="false" required>
                                     <?php
@@ -445,25 +443,23 @@ $doc->BeginHTML();
                             <span class="fw-bold">Birth Order</span>
                             <div class="btn-group w-100 dropup custom-droplist">
                                 <button class="btn w-100 text-wrap btn-secondary dropdown-toggle fw-bold text-capitalize" type="button" id="birth_order_select_button" name="birth_order" data-mdb-toggle="dropdown" aria-haspopup="true" aria-expanded="false" required>
-                                    <?php 
-                                        $order = $res["birth_order"];
-                                        $orders = array("Eldest", "Youngest");
-                                        if (!in_array($order, $orders))
-                                            echo "Others";
-                                        else
-                                            echo $order;
+                                    <?php
+                                    $order = $res["birth_order"];
+                                    $orders = array("Eldest", "Youngest");
+                                    if (!in_array($order, $orders))
+                                        echo "Others";
+                                    else
+                                        echo $order;
                                     ?>
                                 </button>
                                 <div class="dropdown-menu" aria-labelledby="birth_order_select_button">
 
-                                    <button class="dropdown-item text-light" type="button" 
-                                            onclick="setInputReadOnly('input_birth_order','Eldest'); 
+                                    <button class="dropdown-item text-light" type="button" onclick="setInputReadOnly('input_birth_order','Eldest'); 
                                                 setInputVal('input_birth_order','Eldest');
                                                 setElemText('birth_order_select_button','Eldest')">Eldest
                                     </button>
 
-                                    <button class="dropdown-item text-light" type="button" 
-                                            onclick="setInputReadOnly('input_birth_order','Youngest');
+                                    <button class="dropdown-item text-light" type="button" onclick="setInputReadOnly('input_birth_order','Youngest');
                                                 setInputVal('input_birth_order','Youngest');
                                                 setElemText('birth_order_select_button','Youngest')">Youngest
                                     </button>
@@ -502,7 +498,7 @@ $doc->BeginHTML();
                                 </div>
                                 <!-- <input type="hidden" name="input_birth_order"> -->
                             </div>
-                             
+
                             <input type="hidden" id="input_siblings" name="input_siblings" required value="<?php echo htmlspecialchars($res["no_siblings"]) ?>" />
                         </div>
                     </div>
@@ -523,7 +519,7 @@ $doc->BeginHTML();
                                     <button class="dropdown-item text-light" type="button" onclick="setInputVal('input_living_with','Others');setElemText('living_with_button','Others'); enableElementsOnClick(['input_guardianAddress','input_guardianRelation','input_guardianName'])">
                                         Others (Please specify)
                                     </button>
-                                    <input type="hidden" name="input_living_with" id="input_living_with" value="<?php echo htmlspecialchars($res["living_with"]) ?>"/>
+                                    <input type="hidden" name="input_living_with" id="input_living_with" value="<?php echo htmlspecialchars($res["living_with"]) ?>" />
                                 </div>
                             </div>
                         </div>
@@ -649,7 +645,7 @@ $doc->BeginHTML();
                             <div class="mt-4"></div>
                             <div class="fw-bold mb-3">Hearing Condition</div>
                             <div class="form-check">
-                                <input class="form-check-input radio-normal-hearing" type="radio" name="radio_hearing" id="radio_hearing_normal" value="Normal" required <?php setHearingChecked('Normal'); ?> onclick="clearInput('input_hearing_impair')"/>
+                                <input class="form-check-input radio-normal-hearing" type="radio" name="radio_hearing" id="radio_hearing_normal" value="Normal" required <?php setHearingChecked('Normal'); ?> onclick="clearInput('input_hearing_impair')" />
                                 <label class="form-check-label" for="radio_hearing_normal">Normal</label>
                             </div>
                             <div class="form-check mb-3">
@@ -668,7 +664,7 @@ $doc->BeginHTML();
                             <div class="mt-4"></div>
                             <div class="fw-bold mb-3">Speech Condition</div>
                             <div class="form-check">
-                                <input class="form-check-input radio-normal-speech" type="radio" name="radio_speech" id="radio_speech_normal" value="Normal" required <?php setSpeechChecked('Normal'); ?> onclick="clearInput('input_speech_impair')"/>
+                                <input class="form-check-input radio-normal-speech" type="radio" name="radio_speech" id="radio_speech_normal" value="Normal" required <?php setSpeechChecked('Normal'); ?> onclick="clearInput('input_speech_impair')" />
                                 <label class="form-check-label" for="radio_speech_normal">Normal</label>
                             </div>
                             <div class="form-check mb-3">
@@ -731,7 +727,7 @@ $doc->BeginHTML();
 
         </div>
     </div>
-
+ 
     <!-- Modal -->
     <div class="modal fade w-100 h-100" id="mdb-modal" tabindex="-1" aria-labelledby="mdb-modalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -752,13 +748,21 @@ $doc->BeginHTML();
         </div>
     </div>
 
+    <!-- RIGHT DRAWER -->
+    <!-- <div class="right-drawer-overlay position-absolute p-0 top-0 left-0 w-100 h-100">
+        <div class="drawer-wrapper w-100 h-100 d-flex justify-content-end">
+            <div class="right-drawer h-100">
+                test
+            </div>
+        </div>
+    </div> -->
+
 </div>
 <script src="assets/js/student-profile.js"></script>
 <script>
     var mdb_modal = undefined;
 
-    $(document).ready(() => 
-    {
+    $(document).ready(() => {
         // Initialize Modal Box
         mdb_modal = new mdb.Modal(document.getElementById('mdb-modal'), []);
 

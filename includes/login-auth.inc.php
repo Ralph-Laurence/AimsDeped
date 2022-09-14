@@ -74,8 +74,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submit"]))
                 $flag_userId = $students_table["id"];
             }
 
+            // echo "<br>Usertype: " . $flag_userType . "<br>";
+
             // (THIS APPROACH IS BUGGY. What if may same na credentials pero nasa ibang tables?)
-            echo "<br>Usertype: " . $flag_userType . "<br>";
 
             // Generate login cookie then save to local (browser's storage) for later usage
             // We only generate cookie if login is successfull
