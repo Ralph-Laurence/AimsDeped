@@ -156,10 +156,7 @@ require_once("includes/teachers.students-mgt.php");
                         <p>Here are the list of students enrolled.</p>
                     </div>
                     <button class="py-1 px-3" id="save_btn">Save</button>
-                </div>
-                <!-- <div class=" mt-4 ">
-                    <h6>Find Student</h6>
-                </div> -->
+                </div> 
                 <div class="row">
                     <div class="col">
                         <div class="search flex d-flex align-items-center">
