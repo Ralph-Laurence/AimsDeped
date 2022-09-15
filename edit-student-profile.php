@@ -19,9 +19,9 @@ if (empty($authCookie)) {
     exit;
 }
 
-$cond = array("id" => $authCookie["userid"]);
+$this_users_id = array("id" => $authCookie["userid"]);
 
-$res = Singleton::GetDbHelperInstance()->SelectRow_Where(Constants::$STUDENTS_TABLE, $cond, true);
+$res = Singleton::GetDbHelperInstance()->SelectRow_Where(Constants::$STUDENTS_TABLE, $this_users_id, true);
 
 if (empty($res)) {
     // Failed to load student data
@@ -141,7 +141,7 @@ date_default_timezone_set("Asia/Manila");
 $doc = Singleton::GetBoilerPlateInstance();
 $doc->BeginHTML();
 ?>
-<div class="container-fluid position-relative opacity-overlay">
+<div class="container-fluid position-relative opacity-overlay p-0">
 
     <div id="main-content-wrapper" class="main-content-wrapper px-0 px-md-5 w-100">
 
@@ -153,10 +153,14 @@ $doc->BeginHTML();
                     <img src="assets/img/deped-logo-m.png" id="main-logo" alt="logo" width="144" height="72">
                 </div>
 
-                <a href="logout.php" class="btn btn-dark d-inline-flex btn-primary-override btn-rounded justify-content-center align-items-center">
+                <!-- <a href="logout.php" class="btn btn-dark d-inline-flex btn-primary-override btn-rounded justify-content-center align-items-center">
                     <span>Log Out</span>
                     <i class="material-icons-outlined navbar-button-icon">navigate_next</i>
-                </a>
+                </a> -->
+
+                <button type="button" onclick="ShowNavDrawer()" class="btn btn-dark d-inline-flex px-2 btn-primary-override justify-content-center align-items-center">
+                    <i class="material-icons-outlined navbar-button-icon">menu</i>
+                </button>
             </div>
         </nav>
 
@@ -727,7 +731,7 @@ $doc->BeginHTML();
 
         </div>
     </div>
- 
+
     <!-- Modal -->
     <div class="modal fade w-100 h-100" id="mdb-modal" tabindex="-1" aria-labelledby="mdb-modalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -741,25 +745,72 @@ $doc->BeginHTML();
                 </div>
                 <div class="modal-body">...</div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary mdb-modal-close-btn" data-mdb-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" onclick="ClearMsgBox()" data-mdb-dismiss="modal">OK</button>
+                    <button type="button" class="btn btn-secondary mdb-modal-close-btn" onclick="MsgBoxCancelClicked()" data-mdb-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="MsgBoxOKClicked()">OK</button>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- RIGHT DRAWER -->
-    <!-- <div class="right-drawer-overlay position-absolute p-0 top-0 left-0 w-100 h-100">
-        <div class="drawer-wrapper w-100 h-100 d-flex justify-content-end">
-            <div class="right-drawer h-100">
-                test
+    <div class="right-drawer-overlay position-fixed p-0 top-0 left-0 w-100 h-100 flex-row-reverse">
+        <div class="drawer-wrapper bg-light right-drawer h-100 p-0">
+            <div class="row">
+                <div class="col">
+                    <div class="w-100 drawer-header p-3 text-center">
+                        <div class="drawer-header-acc-icon-wrapper">
+                            <img src="assets/img/profile-pic-blank.png" alt="profile-pic" width="96px" height="96px" class="rounded-circle">
+                        </div>
+                        <div class="complete-name mt-4">
+                            <div class="text-light text-truncate">
+                                <?php echo $res['lastname'] . ", " . $res['firstname'] . " " . $res['middlename']; ?>
+                            </div>
+                            <small class="text-light">
+                                <?php echo $res['student_lrn']; ?>
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col drawer-list-items">
+                    <button type="button" class="btn btn-link text-capitalize w-100 p-3 text-dark d-inline-flex justify-content-end align-items-center">
+                        <span class="me-2">Home</span>
+                        <i class="material-icons-sharp ms-3">house</i>
+                    </button>
+                </div>
+                <div class="w-100"></div>
+                <div class="col drawer-list-items">
+                    <button type="button" class="btn btn-link text-capitalize w-100 p-3 text-dark d-inline-flex justify-content-end align-items-center">
+                        <span class="me-2">Help</span>
+                        <i class="material-icons-sharp ms-3">help</i>
+                    </button>
+                </div>
+                <div class="w-100"></div>
+                <div class="col drawer-list-items">
+                    <button type="button" onclick="PromptLogout()" class="btn btn-link text-capitalize w-100 p-3 text-dark d-inline-flex justify-content-end align-items-center">
+                        <span class="me-2">Logout</span>
+                        <i class="material-icons-sharp ms-3">logout</i>
+                    </button>
+                </div>
+                <div class="w-100"></div>
+                <hr>
+                <div class="col drawer-list-items">
+                    <button type="button" onclick="CloseNavDrawer()" class="btn btn-link text-capitalize w-100 p-3 text-dark d-inline-flex justify-content-end align-items-center">
+                        <span class="me-2">Close</span>
+                        <i class="material-icons-sharp ms-3">close</i>
+                    </button>
+                </div>
             </div>
         </div>
-    </div> -->
+    </div>
 
 </div>
+
 <script src="assets/js/student-profile.js"></script>
 <script>
+    var isLoggingOut = false;
+
     var mdb_modal = undefined;
 
     $(document).ready(() => {
@@ -781,11 +832,112 @@ $doc->BeginHTML();
         mdb_modal.show();
     }
 
-    function ClearMsgBox() {
-        mdb_modal.close();
+    function HideMsgBox() {
+        mdb_modal.hide();
         $(".mdb-modal-close-btn").show();
         $("#modal-title").text('');
         $(".modal-body").text('');
+    }
+
+    function MsgBoxOKClicked() {
+
+        // alert("OK CLicked");
+        if (isLoggingOut) {
+            window.location.replace("logout.php");
+        }
+
+        HideMsgBox();
+    }
+
+    function MsgBoxCancelClicked() {
+
+        if (isLoggingOut)
+            isLoggingOut = false;
+    }
+
+    function CloseNavDrawer(callback) 
+    {
+        // $(".right-drawer").animate({
+        //     'width': "0px"
+        // }, 350, function() {
+        //     $(".right-drawer-overlay") //.css('visibility','hidden');
+        //         .hide({
+        //             done: callback
+        //         });
+        // });
+        $(".right-drawer").animate({
+                'width': '0px'
+        }, {
+            duration: 350, 
+            complete: function()
+            {
+                $(".right-drawer").css('display', 'none');
+                $(".right-drawer-overlay").hide({ done: callback }); // css('display', 'none');
+            }
+        });
+    }
+
+    function ShowNavDrawer() 
+    {
+        $(".right-drawer").animate({
+                'width': '280px'
+        }, 
+        {
+            duration: 350,
+            start: function()
+            {
+                $(".right-drawer").css('display', 'block');
+
+                if ($(".right-drawer-overlay").css('display') != 'flex')
+                    $(".right-drawer-overlay").css('display', 'flex')
+
+                $(".right-drawer-overlay").show();
+            }
+        });
+        // $(".right-drawer-overlay").css('display', 'flex').promise().done(() => 
+        // {
+        //     $(".right-drawer").animate({
+        //         'width': '280px'
+        //     }, {
+        //         duration: 350
+        //     })
+        // });
+
+
+        // if ($(".right-drawer-overlay").css('visibility') == 'hidden') 
+        // {
+        //     $(".right-drawer-overlay").css('visibility', 'visible').promise().done(function() 
+        //     {
+        //         $(".right-drawer").animate({
+        //             'width': '280px'
+        //         }, {
+        //             duration: 350,
+        //             start: function() {
+        //                 // $(".right-drawer-overlay").css('visibility','visible').show()
+        //                 $(".right-drawer-overlay").show();
+        //             }
+        //         });
+        //     });
+        //     return;
+        // }
+        
+        // $(".right-drawer").animate({
+        //     'width': '280px'
+        // }, {
+        //     duration: 350,
+        //     start: function() {
+        //         // $(".right-drawer-overlay").css('visibility','visible').show()
+        //         $(".right-drawer-overlay").show();
+        //     }
+        // });
+    }
+
+    function PromptLogout() {
+        isLoggingOut = true;
+
+        CloseNavDrawer(() => {
+            ShowMsgBox("Logout", "Any unsaved changes will not be applied. Continue?");
+        });
     }
 </script>
 

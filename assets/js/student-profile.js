@@ -32,8 +32,7 @@ $(document).ready(function()
 
     /**
      * Show birthday date picker
-     */
-    //$("#birthday_picker").datepicker();
+     */ 
     /**
     * Confirmation before submitting filled out forms   
     */

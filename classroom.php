@@ -29,17 +29,12 @@ if (empty($res)) {
 //
 $firstName = $res['firstname'];
 
-
-//######################################
-// REGION: STUDENT's INFORMATION
-//######################################
-require_once("includes/teachers.students-mgt.php");
-
-
-// foreach($students_table as $s)
-// {
-//     echo "{$s['id']} -> {$s['student_lrn']} <br>";
-// }
+$db = Singleton::GetDbHelperInstance();
+//
+// Retrieve all classrooms that belong to this teacher
+$sql_getclxrooms = "SELECT c.subject_name AS 'subjectName', g.level AS 'section' FROM `classrooms` c LEFT JOIN `teachers` t ON c.teacher_id = t.id LEFT JOIN `grade_section` g ON c.grade_section_id = g.id WHERE t.id = '3'";
+$result = $db -> Pdo -> prepare($sql);
+//
 ?>
 
 <!DOCTYPE html>
@@ -58,7 +53,8 @@ require_once("includes/teachers.students-mgt.php");
     <link rel="stylesheet" href="styles/style.css">
 
     <link rel="stylesheet" href="lib/material-design-icons/material-icons.css">
-    <title>Teacher's Page</title>
+    <link rel="stylesheet" href="lib/mdb/css/mdb.min.css">
+    <title>My Classrooms</title>
 </head>
 
 <body>
@@ -76,7 +72,7 @@ require_once("includes/teachers.students-mgt.php");
 
             <!-- LINKS -->
             <ul class="list-unstyled px-2 pt-5 pb-2">
-                <li class="active d-flex align-items-center px-4">
+                <li class="d-flex align-items-center px-4">
                     <a class="text-decoration-none" href="">
                         <i class="material-icons-sharp">insights</i>
                         <span>Dashboard</span>
@@ -89,14 +85,14 @@ require_once("includes/teachers.students-mgt.php");
                     </a>
                 </li>
                 <li class="d-flex align-items-center px-4">
-                    <a class="text-decoration-none" href="">
+                    <a class="text-decoration-none" href="teacher.php">
                         <i class="material-icons-sharp">groups</i>
                         <span>Students</span>
                     </a>
                 </li>
-                <li class="d-flex align-items-center px-4">
-                    <a class="text-decoration-none" href="classroom.php">
-                    <i class="material-icons-outlined">analytics</i>
+                <li class="active d-flex align-items-center px-4">
+                    <a class="text-decoration-none" href="">
+                        <i class="material-icons-outlined">analytics</i>
                         <span>Classroom</span>
                     </a>
                 </li>
@@ -133,87 +129,74 @@ require_once("includes/teachers.students-mgt.php");
         <div class="content">
             <nav class="px-4 py-1 d-flex justify-content-center px-5 bg-white" id="nav_top">
                 <div class="top_container px-3 d-flex justify-content-between align-items-center">
-                    <span>Total Students : <?php echo $totalEntries; ?></span>
+                    <span>My Classrooms : 0</span>
                     <a href="logout.php" class="px-2 text-decoration-none" id="logout_btn">
                         <i class="fa-solid fa-power-off"></i>
                         Logout
                     </a>
                 </div>
             </nav>
-
-            <!-- SEARCH -->
-            <!-- ==================================== -->
-            <div class="mt-4 px-5">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div class="left">
-                        <h2>Welcome Teacher <?php echo $firstName ?>!</h2>
-                        <p>Here are the list of students enrolled.</p>
-                    </div>
-                    <button class="py-1 px-3" id="save_btn">Save</button>
-                </div>
-                <!-- <div class=" mt-4 ">
-                    <h6>Find Student</h6>
-                </div> -->
-                <div class="row">
-                    <div class="col">
-                        <div class="search flex d-flex align-items-center">
-                            <input type="text" placeholder="Enter student name" class="px-4 py-2" id="search_field">
-                            <button id="search_submit">
-                                <i class="fa-solid fa-magnifying-glass"></i>
-                            </button>
+            <!-- CLASROOM CARDS WRAPPER -->
+            <div class="classroom-cards">
+                <div class="row px-4">
+                    <div class="col-6 col-lg-4 col-md-6 col-sm-6 mt-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Special title treatment</h5>
+                                <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+                                <a href="#" class="btn btn-primary">Go somewhere</a>
+                            </div>
                         </div>
                     </div>
-                    <div class="col d-flex align-items-center justify-content-end">
-                        <a href="<?php echo $_SERVER["PHP_SELF"] . "?page=1"; ?>" class="btn btn-primary mx-2">First</a>
-                        <?php for ($i = 2; $i < $totalPages; $i++) : ?>
-                            <a href="<?php echo $_SERVER["PHP_SELF"] . "?page=" . $i; ?>" class="btn btn-primary mx-2"><?= $i; ?></a>
-                        <?php endfor; ?>
-                        <a href="<?php echo $_SERVER["PHP_SELF"] . "?page=" . $totalPages; ?>" class="btn btn-primary mx-2">Last</a>
+                    <div class="col-6 col-lg-4 col-md-6 col-sm-6 mt-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Special title treatment</h5>
+                                <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+                                <a href="#" class="btn btn-primary">Go somewhere</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-4 w-100 d-none d-lg-none d-md-block d-sm-block"></div>
+                    <div class="col-6 col-lg-4 col-md-6 col-sm-4 mt-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Special title treatment</h5>
+                                <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+                                <a href="#" class="btn btn-primary">Go somewhere</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-lg-4 col-md-6 col-sm-6 mt-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Special title treatment</h5>
+                                <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+                                <a href="#" class="btn btn-primary">Go somewhere</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-4 w-100 d-none d-lg-none d-md-block d-sm-block"></div>
+                    <div class="col-6 col-lg-4 col-md-6 col-sm-4 mt-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Special title treatment</h5>
+                                <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+                                <a href="#" class="btn btn-primary">Go somewhere</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-lg-4 col-md-6 col-sm-6 mt-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Special title treatment</h5>
+                                <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+                                <a href="#" class="btn btn-primary">Go somewhere</a>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
-
-            <!-- TABLE --> 
-            <div class="table_container mt-4 d-flex flex-grow-1 position-relative">
-                <div class="px-5" id="table">
-                    <div class="entries-pagination-tracker">
-                        <h5>Showing <?= $currentPageIndex; ?> of <?= $totalPages ?> entries</h5>
-                    </div>
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th class="py-3 px-5">LRN</th>
-                                <th class="py-3 px-5">Name</th>
-                                <th class="py-3 px-5">Grade Level</th>
-                                <th class="py-3 px-5"></th>
-                                <th class="py-3 px-5">Teacher-in-charge</th>
-                                <th class="py-3 px-5">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <!-- <tr>
-                                <td class="py-3 px-5">Cutie00</td>
-                                <td class="py-3 px-5">Katherine Lucero Decena</td>
-                                <td class="py-3 px-5">Grade 12</td>
-                                <td class="py-3 px-5"></td>
-                                <td class="py-3 px-5">John Doe</td>
-                                <td class="py-3 px-5"><input type="checkbox"></td>
-                            </tr> -->
-                            <?php if ($totalEntries > 0) : ?>
-                                <?php foreach ($students_table as $s) : ?>
-                                    <tr>
-                                        <td class="py-3 px-5"><?= $s['student_lrn']; ?></td>
-                                        <td class="py-3 px-5"><?php echo $s['lastname'] . ", " . $s['firstname'] . " " . $s['middlename'] ?></td>
-                                        <td class="py-3 px-5"><?= $s['grade_level']; ?></td>
-                                        <td class="py-3 px-5"></td>
-                                        <td class="py-3 px-5"></td>
-                                        <td class="py-3 px-5"></td>
-                                    </tr>
-                                <?php endforeach; ?>
-                            <?php endif; ?>
-                        </tbody>
-                    </table>
-                </div>
+                
             </div>
         </div>
     </div>

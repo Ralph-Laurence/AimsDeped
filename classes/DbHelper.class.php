@@ -34,7 +34,17 @@ class DbHelper
         $this -> Pdo -> setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $this -> Pdo -> setAttribute(PDO::MYSQL_ATTR_INIT_COMMAND, "SET sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))");
     }
+    /**
+     * Count all rows from a table
+     */
+    public function CountRows(string $table) : int
+    {
+        $sth = $this -> Pdo -> prepare("SELECT COUNT(*) FROM $table");
+        $sth -> execute();
+        $total = $sth -> fetchColumn();
 
+        return $total;
+    }
     /**
      * Select all rows from a table
      * then returns an ASSOC ARRAY
@@ -136,7 +146,23 @@ class DbHelper
         $result = $sth -> fetch(PDO::FETCH_ASSOC) ?: [];
         return $result;
     }
- 
+    /**
+     * Select all from from offsetX to offsetY.
+     * Useful for pagination
+     */
+    public function SelectLimitOffset(string $table, int $x, int $y)
+    {
+        if ($x < 1)
+            $x = 0;
+
+        $sql = "SELECT * FROM $table ORDER BY id LIMIT $x, $y";
+        $sth = $this -> Pdo -> prepare($sql);
+        $sth -> execute();
+
+        $result = $sth -> fetchAll(PDO::FETCH_ASSOC) ?: [];
+        return $result;
+    }
+
     /**
      * Select All matching rows with matching EQUALS condition
      * then returns and ASSOC ARRAY.

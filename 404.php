@@ -21,7 +21,7 @@ $doc -> BeginHTML();
             1. Check that the website address is spelled correctly.<br>
             2. Go back to the main page, and navigate using the menus.
         </p>
-        <a class="btn btn-primary btn-primary-override btn-lg btn-rounded" href="index.php" role="button">Back to safety</a>
+        <a class="btn btn-primary btn-primary-override btn-lg btn-rounded" href="login.php" role="button">Back to safety</a>
       </div>
     </div>
 </div>
