@@ -72,31 +72,37 @@ require_once("includes/teachers.students-mgt.php");
             </div>
 
             <!-- TOGGLE BUTTON -->
-            <i class="toggle-button open fa-solid fa-burger d-flex justify-content-center align-items-center"></i>
+            <i class="toggle-button open fa-solid fa-bars d-flex justify-content-center align-items-center"></i>
 
             <!-- LINKS -->
             <ul class="list-unstyled px-2 pt-5 pb-2">
-                <li class="active d-flex align-items-center px-4">
-                    <a class="text-decoration-none" href="">
-                        <i class="material-icons-sharp">insights</i>
-                        <span>Dashboard</span>
+                <li class="d-flex align-items-center">
+                    <a class="text-decoration-none w-100" href="">
+                        <span class="px-4">
+                            <i class="material-icons-sharp">insights</i>
+                            <span>Dashboard</span>
+                        </span>
+                    </a>
+                </li>
+                <li class="d-flex align-items-center">
+                    <a class="text-decoration-none w-100" href="">
+                        <span class="px-4">
+                            <i class="fa-solid fa-user"></i>
+                            <span>Profile Management</span>
+                        </span>
+                    </a>
+                </li>
+                <li class="active d-flex align-items-center">
+                    <a class="text-decoration-none w-100" href="">
+                        <span class="px-4">
+                            <i class="material-icons-sharp">groups</i>
+                            <span>Students</span>
+                        </span>
                     </a>
                 </li>
                 <li class="d-flex align-items-center px-4">
-                    <a class="text-decoration-none" href="">
-                        <i class="fa-solid fa-user"></i>
-                        <span>Profile Management</span>
-                    </a>
-                </li>
-                <li class="d-flex align-items-center px-4">
-                    <a class="text-decoration-none" href="">
-                        <i class="material-icons-sharp">groups</i>
-                        <span>Students</span>
-                    </a>
-                </li>
-                <li class="d-flex align-items-center px-4">
-                    <a class="text-decoration-none" href="classroom.php">
-                    <i class="material-icons-outlined">analytics</i>
+                    <a class="text-decoration-none" href="teacher_my-classroom.php">
+                        <i class="material-icons-outlined">analytics</i>
                         <span>Classroom</span>
                     </a>
                 </li>
@@ -173,7 +179,7 @@ require_once("includes/teachers.students-mgt.php");
                 </div>
             </div>
 
-            <!-- TABLE --> 
+            <!-- TABLE -->
             <div class="table_container mt-4 d-flex flex-grow-1 position-relative">
                 <div class="px-5" id="table">
                     <div class="entries-pagination-tracker">
@@ -253,7 +259,7 @@ require_once("includes/teachers.students-mgt.php");
         })
 
         $(".open").on('click', function() {
-            $(this).hasClass('fa-burger') ? toggleOpen($(this)) : toggleClose($(this))
+            $(this).hasClass('fa-bars') ? toggleOpen($(this)) : toggleClose($(this))
         })
 
         $("#save_btn").on('click', function() {
@@ -265,7 +271,7 @@ require_once("includes/teachers.students-mgt.php");
         })
 
         function toggleOpen(el) {
-            el.removeClass('fa-burger')
+            el.removeClass('fa-bars')
             el.addClass('fa-xmark')
             $("#side_nav").removeClass('show')
 
@@ -273,7 +279,7 @@ require_once("includes/teachers.students-mgt.php");
 
         function toggleClose(el) {
             el.removeClass('fa-xmark')
-            el.addClass('fa-burger')
+            el.addClass('fa-bars')
             $("#side_nav").addClass('show')
         }
     </script>

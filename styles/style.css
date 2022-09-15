@@ -80,7 +80,7 @@ hr.h-color{
 }
 .sidebar li a{
     font-size: 15px;
-    pointer-events: none;
+    /* pointer-events: none; */
 }
 .sidebar li a i{
     margin-right: 8px ;
@@ -240,4 +240,26 @@ table tbody tr td{
 }
 #success_icon{
     font-size: 3rem;
+}
+
+
+
+
+.classroom-card-img {
+    background-image: url("../assets/img/card-bg.png");
+}
+
+.classroom-card-orange {
+    background-blend-mode: overlay;
+    background-color: rgba(255, 127, 39); 
+}
+
+.classroom-card-blue {
+    background-blend-mode: overlay;
+    background-color: #235A92; 
+}
+
+.classroom-card-purple {
+    background-blend-mode: overlay;
+    background-color: #563E8D; 
 }

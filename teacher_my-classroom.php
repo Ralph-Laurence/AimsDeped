@@ -32,9 +32,18 @@ $firstName = $res['firstname'];
 $db = Singleton::GetDbHelperInstance();
 //
 // Retrieve all classrooms that belong to this teacher
-$sql_getclxrooms = "SELECT c.subject_name AS 'subjectName', g.level AS 'section' FROM `classrooms` c LEFT JOIN `teachers` t ON c.teacher_id = t.id LEFT JOIN `grade_section` g ON c.grade_section_id = g.id WHERE t.id = '3'";
-$result = $db -> Pdo -> prepare($sql);
+$sql_getclxrooms = "SELECT c.subject_name AS 'subjectName', g.level AS 'section', COUNT(c.subject_name) AS 'total' FROM `classrooms` c LEFT JOIN `teachers` t ON c.teacher_id = t.id LEFT JOIN `grade_section` g ON c.grade_section_id = g.id WHERE t.id = ? GROUP BY c.subject_name";
+$sth = $db->Pdo->prepare($sql_getclxrooms);
+$sth->execute([$authCookie["userid"]]);
+$result_getclxrooms = $sth->fetchAll(PDO::FETCH_ASSOC) ?: [];
 //
+// Define card backgrounds
+//
+$card_backgrounds = [
+    "classroom-card-blue text-light",
+    "classroom-card-orange text-dark",
+    "classroom-card-purple text-light"
+];
 ?>
 
 <!DOCTYPE html>
@@ -68,26 +77,38 @@ $result = $db -> Pdo -> prepare($sql);
             </div>
 
             <!-- TOGGLE BUTTON -->
-            <i class="toggle-button open fa-solid fa-burger d-flex justify-content-center align-items-center"></i>
+            <i class="toggle-button open fa-solid fa-bars d-flex justify-content-center align-items-center"></i>
 
             <!-- LINKS -->
             <ul class="list-unstyled px-2 pt-5 pb-2">
-                <li class="d-flex align-items-center px-4">
+                <!-- <li class="d-flex align-items-center px-4">
                     <a class="text-decoration-none" href="">
                         <i class="material-icons-sharp">insights</i>
                         <span>Dashboard</span>
                     </a>
-                </li>
-                <li class="d-flex align-items-center px-4">
-                    <a class="text-decoration-none" href="">
-                        <i class="fa-solid fa-user"></i>
-                        <span>Profile Management</span>
+                </li> -->
+                <li class="d-flex align-items-center"> 
+                    <a class="text-decoration-none w-100" href="">
+                        <span class="px-4">
+                            <i class="material-icons-sharp">insights</i>
+                            <span>Dashboard</span>
+                        </span>
                     </a>
                 </li>
-                <li class="d-flex align-items-center px-4">
-                    <a class="text-decoration-none" href="teacher.php">
-                        <i class="material-icons-sharp">groups</i>
-                        <span>Students</span>
+                <li class="d-flex align-items-center"> 
+                    <a class="text-decoration-none w-100" href="">
+                        <span class="px-4">
+                            <i class="fa-solid fa-user"></i>
+                            <span>Profile Management</span>
+                        </span>
+                    </a>
+                </li>
+                <li class="d-flex align-items-center">
+                    <a class="text-decoration-none w-100" href="teacher.php">
+                        <span class="px-4">
+                            <i class="material-icons-sharp">groups</i>
+                            <span>Students</span>
+                        </span>
                     </a>
                 </li>
                 <li class="active d-flex align-items-center px-4">
@@ -103,6 +124,7 @@ $result = $db -> Pdo -> prepare($sql);
                     </a>
                 </li>
             </ul>
+
 
             <!-- DIVIDER / SEPARATOR LINE -->
             <hr class="h-color mx-2">
@@ -129,7 +151,7 @@ $result = $db -> Pdo -> prepare($sql);
         <div class="content">
             <nav class="px-4 py-1 d-flex justify-content-center px-5 bg-white" id="nav_top">
                 <div class="top_container px-3 d-flex justify-content-between align-items-center">
-                    <span>My Classrooms : 0</span>
+                    <h4>My Classrooms</h4>
                     <a href="logout.php" class="px-2 text-decoration-none" id="logout_btn">
                         <i class="fa-solid fa-power-off"></i>
                         Logout
@@ -139,65 +161,67 @@ $result = $db -> Pdo -> prepare($sql);
             <!-- CLASROOM CARDS WRAPPER -->
             <div class="classroom-cards">
                 <div class="row px-4">
-                    <div class="col-6 col-lg-4 col-md-6 col-sm-6 mt-4">
-                        <div class="card">
-                            <div class="card-body">
-                                <h5 class="card-title">Special title treatment</h5>
-                                <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-                                <a href="#" class="btn btn-primary">Go somewhere</a>
-                            </div>
+                    <div class="row mt-4">
+                        <div class="col">
+                            <h6 class="fw-bold text-primary">Total Classrooms: <?= count($result_getclxrooms); ?></h6>
                         </div>
                     </div>
-                    <div class="col-6 col-lg-4 col-md-6 col-sm-6 mt-4">
-                        <div class="card">
-                            <div class="card-body">
-                                <h5 class="card-title">Special title treatment</h5>
-                                <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-                                <a href="#" class="btn btn-primary">Go somewhere</a>
+                    <?php if (!empty($result_getclxrooms)) : ?>
+                        <?php foreach ($result_getclxrooms as $classroom) : ?>
+                            <div class="col-6 col-lg-4 col-md-6 col-sm-6 mt-3">
+                                <div class="card">
+                                    <div class="card-body classroom-card-img <?php echo $card_backgrounds[array_rand($card_backgrounds)]; ?> rounded-0">
+                                        <div class="row">
+                                            <div class="col">
+                                                <h4 class="card-title"><?= $classroom['subjectName']; ?></h4>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col">
+                                                <p class="card-text">Section <?= $classroom['section']; ?></p>
+                                            </div>
+                                            <div class="col text-end">
+                                                <p class="card-text"><?= $classroom['total']; ?> Students</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col text-start">
+                                                <div class="dropdown">
+                                                    <a class="btn btn-link p-0 d-inline-flex align-items-center text-dark" href="#" role="button" id="dropdownMenuLink" data-mdb-toggle="dropdown" aria-expanded="false">
+                                                        <i class="material-icons-sharp">more_vert</i>
+                                                    </a>
+                                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                                                        <li>
+                                                            <a class="dropdown-item d-flex align-items-center" href="#">
+                                                                <i class="material-icons-sharp me-3">edit</i>
+                                                                <span class="fw-bold">Edit</span>
+                                                            </a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="dropdown-item d-flex align-items-center" href="#">
+                                                                <i class="material-icons-sharp me-3">delete</i>
+                                                                <span class="fw-bold">Delete</span>
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                            <div class="col text-end">
+                                                <a href="#" class="btn btn-primary">View</a>
+                                            </div>
+                                            <!--  -->
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    </div>
-                    <div class="mt-4 w-100 d-none d-lg-none d-md-block d-sm-block"></div>
-                    <div class="col-6 col-lg-4 col-md-6 col-sm-4 mt-4">
-                        <div class="card">
-                            <div class="card-body">
-                                <h5 class="card-title">Special title treatment</h5>
-                                <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-                                <a href="#" class="btn btn-primary">Go somewhere</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-6 col-lg-4 col-md-6 col-sm-6 mt-4">
-                        <div class="card">
-                            <div class="card-body">
-                                <h5 class="card-title">Special title treatment</h5>
-                                <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-                                <a href="#" class="btn btn-primary">Go somewhere</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="mt-4 w-100 d-none d-lg-none d-md-block d-sm-block"></div>
-                    <div class="col-6 col-lg-4 col-md-6 col-sm-4 mt-4">
-                        <div class="card">
-                            <div class="card-body">
-                                <h5 class="card-title">Special title treatment</h5>
-                                <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-                                <a href="#" class="btn btn-primary">Go somewhere</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-6 col-lg-4 col-md-6 col-sm-6 mt-4">
-                        <div class="card">
-                            <div class="card-body">
-                                <h5 class="card-title">Special title treatment</h5>
-                                <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-                                <a href="#" class="btn btn-primary">Go somewhere</a>
-                            </div>
-                        </div>
-                    </div>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
                 </div>
-                
+
             </div>
+
         </div>
     </div>
 
@@ -228,6 +252,7 @@ $result = $db -> Pdo -> prepare($sql);
     <!-- script -->
     <!-- <script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script> -->
     <script src="lib/jquery/jquery-3.6.1.min.js"></script>
+    <script src="lib/mdb/js/mdb.min.js"></script>
     <!-- action for active link -->
     <script>
         $(".sidebar ul li").on('click', function() {
@@ -236,7 +261,7 @@ $result = $db -> Pdo -> prepare($sql);
         })
 
         $(".open").on('click', function() {
-            $(this).hasClass('fa-burger') ? toggleOpen($(this)) : toggleClose($(this))
+            $(this).hasClass('fa-bars') ? toggleOpen($(this)) : toggleClose($(this))
         })
 
         $("#save_btn").on('click', function() {
@@ -248,7 +273,7 @@ $result = $db -> Pdo -> prepare($sql);
         })
 
         function toggleOpen(el) {
-            el.removeClass('fa-burger')
+            el.removeClass('fa-bars')
             el.addClass('fa-xmark')
             $("#side_nav").removeClass('show')
 
@@ -256,7 +281,7 @@ $result = $db -> Pdo -> prepare($sql);
 
         function toggleClose(el) {
             el.removeClass('fa-xmark')
-            el.addClass('fa-burger')
+            el.addClass('fa-bars')
             $("#side_nav").addClass('show')
         }
     </script>
