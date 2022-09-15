@@ -1,0 +1,10 @@
+Before importing, create database muna ... 
+Name it `deped` (without qoutes)
+
+Then click Import doon sa taas ... --> Browse --> then select nyo ito isa isa ..
+
+teachers.sql        ==> Ito yung table for teachers 
+students.sql        ==> For students
+sdo_admins.sql      ==> Schools division / SDO accounts
+                        --sila yung gumagawa ng coordinator accounts
+coordinators        ==> Sila yung taga create ng teachers
