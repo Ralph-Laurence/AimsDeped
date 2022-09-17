@@ -11,9 +11,9 @@ $doc -> BeginHTML();
     <div class="d-flex justify-content-center align-items-center" style="height: 100vh">
       <div class="text-center">
         <h1 class="display-2 fw-bold">
-            <span style="color: var(--color-primary);">4</span>
-            <span style="color: var(--color-danger);">0</span>
-            <span style="color: var(--color-primary);">4</span>
+            <span style="color: var(--color-primary-override);">4</span>
+            <span style="color: var(--color-danger-override);">0</span>
+            <span style="color: var(--color-primary-override);">4</span>
         </h1>
         <h4 class="mb-4">We can't seem to find the page you're looking for.</h4>
         <h6 class="mb-2 fw-bold">Here are things you can try:</h6>
