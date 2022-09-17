@@ -55,7 +55,8 @@ require_once("includes/teachers.students-mgt.php");
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-u1OknCvxWvY5kfmNBILK2hRnQC3Pr17a+RTT6rIHI7NnikvbZlHgTPOOmMi466C8" crossorigin="anonymous"></script>
     <!-- Icon -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha512-xh6O/CkQoPOWDdYTDqeRdPCVd1SpvCA9XXcUnZS2FmJNp1coAFzvtCN9BmamE+4aHK8yyUHUSCcJHgXloTyT2A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link rel="stylesheet" href="styles/style.css">
+    <!-- <link rel="stylesheet" href="styles/style.css"> -->
+    <link rel="stylesheet" href="styles/style.css?v=<?php echo time(); ?>">
 
     <link rel="stylesheet" href="lib/material-design-icons/material-icons.css">
     <title>Teacher's Page</title>
@@ -138,13 +139,21 @@ require_once("includes/teachers.students-mgt.php");
         <!-- ==================================== -->
         <div class="content">
             <nav class="px-4 py-1 d-flex justify-content-center px-5 bg-white" id="nav_top">
-                <div class="top_container px-3 d-flex justify-content-between align-items-center">
+                
+            <div class="top_container px-3 d-flex justify-content-between align-items-center">
                     <span>Total Students : <?php echo $totalEntries; ?></span>
-                    <a href="logout.php" class="px-2 text-decoration-none" id="logout_btn">
-                        <i class="fa-solid fa-power-off"></i>
-                        Logout
-                    </a>
-                </div>
+                    
+                    <!-- SAVE BUTTON -->
+                    <div class="d-flex align-items-center">
+                        <button class="py-1 px-3" id="save_btn">Save</button>
+                        <!-- LOGOUT BUTTON -->
+                        <a href="logout.php" class="px-2 text-decoration-none d-none d-md-block" id="logout_btn">
+                            <i class="fa-solid fa-power-off" class="logout_btn_icon"></i>
+                            Logout
+                        </a>
+                    </div>
+            </div>
+
             </nav>
 
             <!-- SEARCH -->
@@ -155,33 +164,46 @@ require_once("includes/teachers.students-mgt.php");
                         <h2>Welcome Teacher <?php echo $firstName ?>!</h2>
                         <p>Here are the list of students enrolled.</p>
                     </div>
-                    <button class="py-1 px-3" id="save_btn">Save</button>
-                </div> 
-                <div class="row">
-                    <div class="col">
-                        <div class="search flex d-flex align-items-center">
-                            <input type="text" placeholder="Enter student name" class="px-4 py-2" id="search_field">
-                            <button id="search_submit">
-                                <i class="fa-solid fa-magnifying-glass"></i>
-                            </button>
+
+                    <!-- SEARCH -->
+                    <div class="row">
+                        <div class="col">
+                            <div class="search flex d-flex align-items-center">
+                                <input type="text" placeholder="Enter student name" class="px-4 py-2" id="search_field">
+                                <button id="search_submit">
+                                    <i class="fa-solid fa-magnifying-glass"></i>
+                                </button>
+                            </div>
                         </div>
+                      
                     </div>
-                    <div class="col d-flex align-items-center justify-content-end">
-                        <a href="<?php echo $_SERVER["PHP_SELF"] . "?page=1"; ?>" class="btn btn-primary mx-2">First</a>
-                        <?php for ($i = 2; $i < $totalPages; $i++) : ?>
-                            <a href="<?php echo $_SERVER["PHP_SELF"] . "?page=" . $i; ?>" class="btn btn-primary mx-2"><?= $i; ?></a>
-                        <?php endfor; ?>
-                        <a href="<?php echo $_SERVER["PHP_SELF"] . "?page=" . $totalPages; ?>" class="btn btn-primary mx-2">Last</a>
-                    </div>
-                </div>
+                </div> 
+              
             </div>
+<<<<<<< Updated upstream
 
             <!-- TABLE -->
             <div class="table_container mt-4 d-flex flex-grow-1 position-relative table-sm">
+=======
+            
+            <!-- TABS -->
+            <ul class="nav nav-tabs px-5 mt-3 mt-md-1" id="myTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="true">All Students</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="false">Selected Students</button>
+                </li>
+            </ul>
+            <div class="table_container d-flex flex-grow-1 position-relative">
+                
+                <!-- TABLE -->
+>>>>>>> Stashed changes
                 <div class="px-5" id="table">
-                    <div class="entries-pagination-tracker">
+                    <!-- <div class="entries-pagination-tracker">
                         <h5>Showing <?= $currentPageIndex; ?> of <?= $totalPages ?> entries</h5>
-                    </div>
+                    </div> -->
+
                     <table class="table">
                         <thead>
                             <tr>
@@ -216,6 +238,30 @@ require_once("includes/teachers.students-mgt.php");
                             <?php endif; ?>
                         </tbody>
                     </table>
+                </div>
+                
+                <!-- PAGINATION -->
+                <div class="px-5" id="pagination_container">
+                    <div class="row">
+                        <!-- ENTRIES -->
+                        <div class="col d-flex align-items-center justify-content-start">
+                            <span>Showing 
+                                <span class="current_page_index"> <?= $currentPageIndex; ?> </span>  
+                                of  
+                                <span class="end_page_index"> <?= $totalPages ?> </span> 
+                                entries
+                            </span>
+                        </div>
+                        
+                        <!-- PAGE PAGINATION -->
+                        <div class="col d-flex align-items-center justify-content-end">
+                            <a href="<?php echo $_SERVER["PHP_SELF"] . "?page=1"; ?>" class="btn btn-primary mx-2">First</a>
+                            <?php for ($i = 2; $i < $totalPages; $i++) : ?>
+                                <a href="<?php echo $_SERVER["PHP_SELF"] . "?page=" . $i; ?>" class="btn btn-primary mx-2"><?= $i; ?></a>
+                            <?php endfor; ?>
+                            <a href="<?php echo $_SERVER["PHP_SELF"] . "?page=" . $totalPages; ?>" class="btn btn-primary mx-2">Last</a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
