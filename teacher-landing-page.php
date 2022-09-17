@@ -156,7 +156,7 @@ require_once("includes/teachers.students-mgt.php");
                         <p>Here are the list of students enrolled.</p>
                     </div>
                     <button class="py-1 px-3" id="save_btn">Save</button>
-                </div> 
+                </div>
                 <div class="row">
                     <div class="col">
                         <div class="search flex d-flex align-items-center">
@@ -176,6 +176,7 @@ require_once("includes/teachers.students-mgt.php");
                 </div>
             </div>
 
+
             <!-- TABLE -->
             <div class="table_container mt-4 d-flex flex-grow-1 position-relative table-sm">
                 <div class="px-5" id="table">
@@ -185,6 +186,7 @@ require_once("includes/teachers.students-mgt.php");
                     <table class="table">
                         <thead>
                             <tr>
+                                <th class="d-none"></th>
                                 <th class="py-3 px-5">LRN</th>
                                 <th class="py-3 px-5">Name</th>
                                 <th class="py-3 px-5">Grade & Section</th>
@@ -205,6 +207,7 @@ require_once("includes/teachers.students-mgt.php");
                             <?php if ($totalEntries > 0) : ?>
                                 <?php foreach ($students_table as $s) : ?>
                                     <tr>
+                                        <td class="d-none"><?= Utils::Obfuscate($s['LRN']); ?></td>
                                         <td class="py-3 px-5"><?= $s['LRN']; ?></td>
                                         <td class="py-3 px-5"><?= $s["StudentName"] ?></td>
                                         <td class="py-3 px-5"><?= $s['GradeSection']; ?></td>
@@ -281,6 +284,33 @@ require_once("includes/teachers.students-mgt.php");
         }
     </script>
 
+
+    <script>
+        $(document).ready(function()
+        {
+            $("td").click(function()
+            { 
+                var key = $(this).closest("tr").find("td:eq(0)").text();
+                $("#input_key").val(key);
+                $("#submit_key").click();
+            })
+        });
+
+        function GetCellValueOnClick()
+        {
+            $("td").click(function()
+            {
+                var rowIndex = $(this).closest("tr").index();
+                var colIndex = $(this).index();
+                alert("row index: " + rowIndex + "\nCol Index: " + colIndex); 
+            })
+        }
+    </script>
+
+    <form action="teacher-selected-student.php" method="POST">
+        <input type="hidden" name="input_key" id="input_key" value="">
+        <input type="submit" name="submit_key" id="submit_key" class="d-none" value="">
+    </form>
 </body>
 
 </html>

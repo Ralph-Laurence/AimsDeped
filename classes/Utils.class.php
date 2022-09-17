@@ -49,6 +49,40 @@ class Utils
 
         return "";
     }
+
+    public static function DateFmt($date, $format) : string
+    {
+        $date = new DateTime($date);
+        $result = $date -> format($format);
+        return $result;
+    }
+
+    /**
+     * 2 - Layer obfuscation
+     */
+    public static function Obfuscate($raw) : string
+    {
+        // Raw to BASE 64
+        $l1 = urlencode(base64_encode($raw));
+
+        // Base64 to Bin2Hex
+        $l2 = bin2hex($l1); 
+
+        return $l2;
+    }
+
+    /**
+     * Reveal Obfuscated string
+     */
+    public static function Reveal($obfuscated) : string
+    { 
+        // Bin2Hex to Base64
+        $r2 = hex2bin($obfuscated); 
+
+        $r1 = base64_decode(urldecode($r2));
+ 
+        return $r1;
+    }
 }
 
 ?>

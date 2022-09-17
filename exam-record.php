@@ -17,7 +17,8 @@ if (empty($authCookie)) {
 //
 $this_users_id = array("id" => $authCookie["userid"]);
 
-$res = Singleton::GetDbHelperInstance()->SelectRow_Where(Constants::$TEACHERS_TABLE, $this_users_id, true);
+$db = Singleton::GetDbHelperInstance();
+$res = $db->SelectRow_Where(Constants::$TEACHERS_TABLE, $this_users_id, true);
 
 if (empty($res)) {
     // Failed to load teacher's data
@@ -28,7 +29,15 @@ if (empty($res)) {
 // We expect that all relevant info has been loaded
 //
 $firstName = $res['firstname'];
- 
+
+//
+// DUMMY DATA
+//
+$exam_subject = "Math";
+$teacher_name = $res['firstname'] . " " . $res['middlename'] . " " . $res['lastname'];
+$section = "5-A";
+
+require_once("includes/get-exam-records.inc.php");
 ?>
 
 <!DOCTYPE html>
@@ -47,6 +56,8 @@ $firstName = $res['firstname'];
     <link rel="stylesheet" href="styles/style.css">
 
     <link rel="stylesheet" href="lib/material-design-icons/material-icons.css">
+
+    <link rel="stylesheet" href="lib/mdb/css/mdb.min.css">
     <title>Teacher's Page</title>
 </head>
 
@@ -81,8 +92,8 @@ $firstName = $res['firstname'];
                         </span>
                     </a>
                 </li>
-                <li class="active d-flex align-items-center">
-                    <a class="text-decoration-none w-100" href="">
+                <li class="d-flex align-items-center">
+                    <a class="text-decoration-none w-100" href="teacher.php">
                         <span class="px-4">
                             <i class="material-icons-sharp">groups</i>
                             <span>Students</span>
@@ -90,15 +101,15 @@ $firstName = $res['firstname'];
                     </a>
                 </li>
                 <li class="d-flex align-items-center px-4">
-                    <a class="text-decoration-none" href="teacher_my-classroom.php">
-                        <i class="material-icons-outlined">analytics</i>
-                        <span>Classroom</span>
+                    <a class="text-decoration-none w-100" href="section-handles.php">
+                        <i class="material-icons-outlined">meeting_room</i>
+                        <span>My Sections</span>
                     </a>
                 </li>
-                <li class="d-flex align-items-center px-4">
-                    <a class="text-decoration-none" href="">
+                <li class="active d-flex align-items-center px-4">
+                    <a class="text-decoration-none w-100" href="#!">
                         <i class="material-icons-sharp">badge</i>
-                        <span>Marks</span>
+                        <span>Exams</span>
                     </a>
                 </li>
             </ul>
@@ -126,6 +137,8 @@ $firstName = $res['firstname'];
         <!-- MAIN CONTENT -->
         <!-- ==================================== -->
         <div class="content">
+
+            <!--UPPER NAVBAR-->
             <nav class="px-4 py-1 d-flex justify-content-center px-5 bg-white" id="nav_top">
                 <div class="top_container px-3 d-flex justify-content-between align-items-center">
                     <h5>Exam Record Sheet</h5>
@@ -136,52 +149,153 @@ $firstName = $res['firstname'];
                 </div>
             </nav>
 
-            <!-- SEARCH -->
-            <!-- ==================================== -->
-            <div class="mt-4 px-5">
-                 
+            <!-- BEGIN: WORKSPACE -->
+
+            <div class="container h-100 shadow">
+                <!--BEGIN: SUBJECT TITLE-->
+                <div class="row">
+                    <div class="col text-center p-3">
+                        <h2><?= $exam_subject; ?></h2>
+                    </div>
+                </div>
+                <!--END: SUBJECT TITLE-->
+
+                <!--BEGIN: SHEET FILTER FORM-->
+                <form action="<?= $_SERVER["PHP_SELF"]; ?>" method="POST">
+                    <input type="hidden" name="input_gradingPeriod" id="input_gradingPeriod" value="Select">
+                    <input type="hidden" name="input_examSubject" id="input_examSubject" value="<?= $exam_subject; ?>">
+                    <button type="submit-form-filter" class="invisible submit-form-filter"></button>
+                </form> 
+                <!--END: SHEET FILTER FORM-->
+
+                <!--BEGIN: SHEET HEADERS -->
+                <div class="sheet-headers px-5">
+                    <div class="row">
+                        <div class="col text-start">
+                            <div class="d-block">
+                                <div class="d-inline-flex flex-row align-items-center">
+                                    <h5 class="me-2 text-muted">Teacher:</h5>
+                                    <h5><?= $teacher_name; ?></h5>
+                                </div>
+                            </div>
+                            <div class="d-block">
+                                <div class="d-inline-flex flex-row align-items-center">
+                                    <h5 class="me-2 text-muted">Grade & Section:</h5>
+                                    <h5><?= $section; ?></h5>
+                                </div>
+                            </div>
+                            <div class="d-block mt-2">
+                                <div class="row">
+                                    <div class="col-2 d-flex text-muted align-items-center fs-5">
+                                        Grading Period:
+                                    </div>
+                                    <div class="col">
+                                        <!-- Default dropright button -->
+                                        <div class="btn-group dropend d-inline">
+                                            <button type="button" class="btn btn-primary dropdown-toggle fw-bold text-capitalize fs-6 p-2" data-mdb-toggle="dropdown" aria-expanded="false">
+                                                <?php echo $gradingPeriod ?: "Select"; ?>
+                                            </button>
+                                            <ul class="dropdown-menu">
+                                                <!-- <li><button type="button" onclick="GetExams('1m');" class="dropdown-item">1st Mid Quarter</button></li> -->
+                                                <li><button type="button" onclick="GetExams('1q');" class="dropdown-item">Exam 1</button></li>
+                                                <li>
+                                                    <hr class="dropdown-divider" />
+                                                </li>
+                                                <!-- <li><button type="button" onclick="GetExams('2m');" class="dropdown-item">2nd Mid Quarter</button></li> -->
+                                                <li><button type="button" onclick="GetExams('2q');" class="dropdown-item">Exam 2</button></li>
+                                                <li>
+                                                    <hr class="dropwdown-divider">
+                                                </li>
+                                                <!-- <li><button type="button" onclick="GetExams('3m');" class="dropdown-item">3rd Mid Quarter</button></li> -->
+                                                <li><button type="button" onclick="GetExams('3q');" class="dropdown-item">Exam 3</button></li>
+                                                <li>
+                                                    <hr class="dropdown-divider">
+                                                </li>
+                                                <!-- <li><button type="button" onclick="GetExams('4m');" class="dropdown-item">4th Mid Quarter</button></li> -->
+                                                <li><button type="button" onclick="GetExams('finals');" class="dropdown-item">Finals</button></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--END: SHEET HEADERS -->
+
+                <!-- BEGIN: SHEET AREA -->
+                <div class="sheet-area p-5">
+                    <div class="row">
+                        <div class="col">
+                            <table class="table table-sm table-striped table-hover exams-table">
+                                <thead>
+                                    <tr>
+                                        <th class="fw-bold" scope="col">LRN</th>
+                                        <th class="fw-bold" scope="col">Name</th>
+                                        <th class="fw-bold" scope="col">Score</th>
+                                        <th class="fw-bold" scope="col">Proficiency</th>
+                                        <th class="fw-bold" scope="col">Date</th>
+                                        <!-- <th scope="col">Retake</th> -->
+                                        <th scope="col">Remarks</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="exams-table-body">
+                                    <tr style="background-color: #E5DFB7;">
+                                        <th scope="row">
+                                            <small class="fw-bold">Average Score</small>
+                                        </th>
+                                        <td colspan="1"></td>
+                                        <td>
+                                            <div class="form-outline">
+                                                <input type="text" id="form12" class="form-control bg-light" value="<?php if (!empty($exam_table_set)) echo $exam_table_set[0]["highest_possible"]; ?>" />
+                                                <label class="form-label" for="form12">Highest Possible</label>
+                                            </div>
+                                        </td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                    <tr class="bg-dark">
+                                        <td colspan="6" class="py-1 px-4 fw-bold text-light" scope="row">Boys</td>
+                                    </tr>
+                                    <?php foreach ($exam_table_set as $set) : ?>
+                                        <?php if ($set["gender"] == "Boy") : ?>
+                                            <tr>
+                                                <th scope="row"><?= $set['student_lrn']; ?></th>
+                                                <td><?= $set['firstname'] . ' ' . $set['middlename'] . ' ' . $set['lastname']; ?></td>
+                                                <td><?= $set["exam_score"] ?></td>
+                                                <td><?= $set["proficiency"]; ?></td>
+                                                <td><?= Utils::DateFmt($set['exam_date'], "F-d-Y"); ?></td>
+                                                <!-- <td><= $set["retake"]; ?></td> -->
+                                                <td><?= $set["remarks"]; ?></td>
+                                            </tr>
+                                        <?php endif; ?>
+                                    <?php endforeach; ?>
+                                    <tr class="bg-dark">
+                                        <td colspan="6" class="py-1 px-4 fw-bold text-light" scope="row">Girls</td>
+                                    </tr>
+                                    <?php foreach ($exam_table_set as $set) : ?>
+                                        <?php if ($set["gender"] == "Girl") : ?>
+                                            <tr>
+                                                <th scope="row"><?= $set['student_lrn']; ?></th>
+                                                <td><?= $set['firstname'] . ' ' . $set['middlename'] . ' ' . $set['lastname']; ?></td>
+                                                <td><?= $set["exam_score"] ?></td>
+                                                <td><?= $set["proficiency"]; ?></td>
+                                                <td><?= Utils::DateFmt($set['exam_date'], "F-d-Y"); ?></td>
+                                                <!-- <td><= $set["retake"]; ?></td> -->
+                                                <td><?= $set["remarks"]; ?></td>
+                                            </tr>
+                                        <?php endif; ?>
+                                    <?php endforeach; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <!-- END: SHEET AREA -->
             </div>
 
-            <!-- TABLE -->
-            <div class="table_container mt-4 d-flex flex-grow-1 position-relative">
-                <div class="px-5" id="table">
-                     
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th class="py-3 px-5">LRN</th>
-                                <th class="py-3 px-5">Name</th>
-                                <th class="py-3 px-5">Grade Level</th>
-                                <th class="py-3 px-5"></th>
-                                <th class="py-3 px-5">Teacher-in-charge</th>
-                                <th class="py-3 px-5">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <!-- <tr>
-                                <td class="py-3 px-5">Cutie00</td>
-                                <td class="py-3 px-5">Katherine Lucero Decena</td>
-                                <td class="py-3 px-5">Grade 12</td>
-                                <td class="py-3 px-5"></td>
-                                <td class="py-3 px-5">John Doe</td>
-                                <td class="py-3 px-5"><input type="checkbox"></td>
-                            </tr> -->
-                            <!-- <php if ($totalEntries > 0) : ?>
-                                <php foreach ($students_table as $s) : ?>
-                                    <tr>
-                                        <td class="py-3 px-5"><= $s['student_lrn']; ?></td>
-                                        <td class="py-3 px-5"><php echo $s['lastname'] . ", " . $s['firstname'] . " " . $s['middlename'] ?></td>
-                                        <td class="py-3 px-5"><= $s['grade_level']; ?></td>
-                                        <td class="py-3 px-5"></td>
-                                        <td class="py-3 px-5"></td>
-                                        <td class="py-3 px-5"></td>
-                                    </tr>
-                                <php endforeach; ?>
-                            <php endif; ?> -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+            <!-- END: WORKSPACE -->
         </div>
     </div>
 
@@ -212,6 +326,8 @@ $firstName = $res['firstname'];
     <!-- script -->
     <!-- <script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script> -->
     <script src="lib/jquery/jquery-3.6.1.min.js"></script>
+    <script src="lib/mdb/js/mdb.min.js"></script>
+    <script src="assets/js/exam-record.js"></script>
     <!-- action for active link -->
     <script>
         $(".sidebar ul li").on('click', function() {
@@ -242,6 +358,12 @@ $firstName = $res['firstname'];
             el.removeClass('fa-xmark')
             el.addClass('fa-bars')
             $("#side_nav").addClass('show')
+        } 
+
+        function GetExams(quarter)
+        {
+            $("#input_gradingPeriod").val(quarter);
+            $(".submit-form-filter").click();
         }
     </script>
 

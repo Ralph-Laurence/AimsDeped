@@ -856,15 +856,7 @@ $doc->BeginHTML();
     }
 
     function CloseNavDrawer(callback) 
-    {
-        // $(".right-drawer").animate({
-        //     'width': "0px"
-        // }, 350, function() {
-        //     $(".right-drawer-overlay") //.css('visibility','hidden');
-        //         .hide({
-        //             done: callback
-        //         });
-        // });
+    { 
         $(".right-drawer").animate({
                 'width': '0px'
         }, {
@@ -893,43 +885,7 @@ $doc->BeginHTML();
 
                 $(".right-drawer-overlay").show();
             }
-        });
-        // $(".right-drawer-overlay").css('display', 'flex').promise().done(() => 
-        // {
-        //     $(".right-drawer").animate({
-        //         'width': '280px'
-        //     }, {
-        //         duration: 350
-        //     })
-        // });
-
-
-        // if ($(".right-drawer-overlay").css('visibility') == 'hidden') 
-        // {
-        //     $(".right-drawer-overlay").css('visibility', 'visible').promise().done(function() 
-        //     {
-        //         $(".right-drawer").animate({
-        //             'width': '280px'
-        //         }, {
-        //             duration: 350,
-        //             start: function() {
-        //                 // $(".right-drawer-overlay").css('visibility','visible').show()
-        //                 $(".right-drawer-overlay").show();
-        //             }
-        //         });
-        //     });
-        //     return;
-        // }
-        
-        // $(".right-drawer").animate({
-        //     'width': '280px'
-        // }, {
-        //     duration: 350,
-        //     start: function() {
-        //         // $(".right-drawer-overlay").css('visibility','visible').show()
-        //         $(".right-drawer-overlay").show();
-        //     }
-        // });
+        }); 
     }
 
     function PromptLogout() {

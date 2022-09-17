@@ -29,17 +29,33 @@ if (empty($res)) {
 //
 $firstName = $res['firstname'];
 
+$db = Singleton::GetDbHelperInstance();
+//
+// Retrieve all classrooms that belong to this teacher
+//$sql_getclxrooms = "SELECT c.subject_name AS 'subjectName', g.level AS 'section', COUNT(c.subject_name) AS 'total' FROM `classrooms` c LEFT JOIN `teachers` t ON c.teacher_id = t.id LEFT JOIN `grade_section` g ON c.grade_section_id = g.id WHERE t.id = ? GROUP BY c.subject_name";
 
-//######################################
-// REGION: STUDENT's INFORMATION
-//######################################
-require_once("includes/teachers.students-mgt.php");
 
+// SELECT ALL SECTIONS THAT BELONG TO THIS TEACHER
+$sql_get_sects = "SELECT 
+h.subject_assign AS 'subjectName', 
+g.level AS 'section',
+COUNT(*) AS 'total' FROM `students` s 
+LEFT JOIN teacher_section_handles h on s.section_id = h.section_id
+LEFT JOIN `grade_section` g ON g.id = h.section_id
+WHERE h.teacher_id =?
+group by h.section_id";
 
-// foreach($students_table as $s)
-// {
-//     echo "{$s['id']} -> {$s['student_lrn']} <br>";
-// }
+$sth = $db->Pdo->prepare($sql_get_sects);
+$sth->execute([$authCookie["userid"]]);
+$result_getclxrooms = $sth->fetchAll(PDO::FETCH_ASSOC) ?: [];
+//
+// Define card backgrounds
+//
+$card_backgrounds = [
+    "classroom-card-blue text-light",
+    "classroom-card-orange text-dark",
+    "classroom-card-purple text-light"
+];
 ?>
 
 <!DOCTYPE html>
@@ -58,7 +74,8 @@ require_once("includes/teachers.students-mgt.php");
     <link rel="stylesheet" href="styles/style.css">
 
     <link rel="stylesheet" href="lib/material-design-icons/material-icons.css">
-    <title>Teacher's Page</title>
+    <link rel="stylesheet" href="lib/mdb/css/mdb.min.css">
+    <title>My Sections</title>
 </head>
 
 <body>
@@ -92,15 +109,15 @@ require_once("includes/teachers.students-mgt.php");
                         </span>
                     </a>
                 </li>
-                <li class="active d-flex align-items-center">
-                    <a class="text-decoration-none w-100" href="#!">
+                <li class="d-flex align-items-center">
+                    <a class="text-decoration-none w-100" href="teacher.php">
                         <span class="px-4">
                             <i class="material-icons-sharp">groups</i>
                             <span>Students</span>
                         </span>
                     </a>
                 </li>
-                <li class="d-flex align-items-center px-4">
+                <li class="active d-flex align-items-center px-4">
                     <a class="text-decoration-none w-100" href="section-handles.php">
                         <i class="material-icons-outlined">meeting_room</i>
                         <span>My Sections</span>
@@ -113,6 +130,7 @@ require_once("includes/teachers.students-mgt.php");
                     </a>
                 </li>
             </ul>
+
 
             <!-- DIVIDER / SEPARATOR LINE -->
             <hr class="h-color mx-2">
@@ -139,85 +157,77 @@ require_once("includes/teachers.students-mgt.php");
         <div class="content">
             <nav class="px-4 py-1 d-flex justify-content-center px-5 bg-white" id="nav_top">
                 <div class="top_container px-3 d-flex justify-content-between align-items-center">
-                    <span>Total Students : <?php echo $totalEntries; ?></span>
+                    <h4>My Sections</h4>
                     <a href="logout.php" class="px-2 text-decoration-none" id="logout_btn">
                         <i class="fa-solid fa-power-off"></i>
                         Logout
                     </a>
                 </div>
             </nav>
-
-            <!-- SEARCH -->
-            <!-- ==================================== -->
-            <div class="mt-4 px-5">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div class="left">
-                        <h2>Welcome Teacher <?php echo $firstName ?>!</h2>
-                        <p>Here are the list of students enrolled.</p>
-                    </div>
-                    <button class="py-1 px-3" id="save_btn">Save</button>
-                </div> 
-                <div class="row">
-                    <div class="col">
-                        <div class="search flex d-flex align-items-center">
-                            <input type="text" placeholder="Enter student name" class="px-4 py-2" id="search_field">
-                            <button id="search_submit">
-                                <i class="fa-solid fa-magnifying-glass"></i>
-                            </button>
+            <!-- CLASROOM CARDS WRAPPER -->
+            <div class="classroom-cards">
+                <div class="row px-4">
+                    <div class="row mt-4">
+                        <div class="col">
+                            <h6 class="fw-bold text-primary">Total Sections: <?= count($result_getclxrooms); ?></h6>
                         </div>
                     </div>
-                    <div class="col d-flex align-items-center justify-content-end">
-                        <a href="<?php echo $_SERVER["PHP_SELF"] . "?page=1"; ?>" class="btn btn-primary mx-2">First</a>
-                        <?php for ($i = 2; $i < $totalPages; $i++) : ?>
-                            <a href="<?php echo $_SERVER["PHP_SELF"] . "?page=" . $i; ?>" class="btn btn-primary mx-2"><?= $i; ?></a>
-                        <?php endfor; ?>
-                        <a href="<?php echo $_SERVER["PHP_SELF"] . "?page=" . $totalPages; ?>" class="btn btn-primary mx-2">Last</a>
-                    </div>
+                    <?php if (!empty($result_getclxrooms)) : ?>
+                        <?php foreach ($result_getclxrooms as $classroom) : ?>
+                            <div class="col-6 col-lg-4 col-md-6 col-sm-6 mt-3">
+                                <div class="card">
+                                    <div class="card-body classroom-card-img <?php echo $card_backgrounds[array_rand($card_backgrounds)]; ?> rounded-0">
+                                        <div class="row">
+                                            <div class="col">
+                                                <h4 class="card-title"><?= $classroom['subjectName']; ?></h4>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col">
+                                                <p class="card-text">Section <?= $classroom['section']; ?></p>
+                                            </div>
+                                            <div class="col text-end">
+                                                <p class="card-text"><?= $classroom['total']; ?> Students</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col text-start">
+                                                <div class="dropdown">
+                                                    <a class="btn btn-link p-0 d-inline-flex align-items-center text-dark" href="#" role="button" id="dropdownMenuLink" data-mdb-toggle="dropdown" aria-expanded="false">
+                                                        <i class="material-icons-sharp">more_vert</i>
+                                                    </a>
+                                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                                                        <li>
+                                                            <a class="dropdown-item d-flex align-items-center" href="#">
+                                                                <i class="material-icons-sharp me-3">edit</i>
+                                                                <span class="fw-bold">Edit</span>
+                                                            </a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="dropdown-item d-flex align-items-center" href="#">
+                                                                <i class="material-icons-sharp me-3">exit_to_app</i>
+                                                                <span class="fw-bold">Leave Section</span>
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                            <div class="col text-end">
+                                                <a href="#" class="btn btn-primary fw-bold text-capitalize">View</a>
+                                            </div>
+                                            <!--  -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
                 </div>
+
             </div>
 
-            <!-- TABLE -->
-            <div class="table_container mt-4 d-flex flex-grow-1 position-relative table-sm">
-                <div class="px-5" id="table">
-                    <div class="entries-pagination-tracker">
-                        <h5>Showing <?= $currentPageIndex; ?> of <?= $totalPages ?> entries</h5>
-                    </div>
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th class="py-3 px-5">LRN</th>
-                                <th class="py-3 px-5">Name</th>
-                                <th class="py-3 px-5">Grade & Section</th>
-                                <th class="py-3 px-5"></th>
-                                <th class="py-3 px-5">Teacher-in-charge</th>
-                                <th class="py-3 px-5">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <!-- <tr>
-                                <td class="py-3 px-5">Cutie00</td>
-                                <td class="py-3 px-5">Katherine Lucero Decena</td>
-                                <td class="py-3 px-5">Grade 12</td>
-                                <td class="py-3 px-5"></td>
-                                <td class="py-3 px-5">John Doe</td>
-                                <td class="py-3 px-5"><input type="checkbox"></td>
-                            </tr> -->
-                            <?php if ($totalEntries > 0) : ?>
-                                <?php foreach ($students_table as $s) : ?>
-                                    <tr>
-                                        <td class="py-3 px-5"><?= $s['LRN']; ?></td>
-                                        <td class="py-3 px-5"><?= $s["StudentName"] ?></td>
-                                        <td class="py-3 px-5"><?= $s['GradeSection']; ?></td>
-                                        <td class="py-3 px-5"></td>
-                                        <td class="py-3 px-5"><?= $s['TeacherInCharge'] ?></td>
-                                        <td class="py-3 px-5"></td>
-                                    </tr>
-                                <?php endforeach; ?>
-                            <?php endif; ?>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
         </div>
     </div>
 
@@ -248,6 +258,7 @@ require_once("includes/teachers.students-mgt.php");
     <!-- script -->
     <!-- <script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script> -->
     <script src="lib/jquery/jquery-3.6.1.min.js"></script>
+    <script src="lib/mdb/js/mdb.min.js"></script>
     <!-- action for active link -->
     <script>
         $(".sidebar ul li").on('click', function() {
