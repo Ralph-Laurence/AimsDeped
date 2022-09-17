@@ -154,7 +154,7 @@
             <!-- TABLE -->
             <div class="table_container d-flex flex-grow-1 position-relative">
                 <div class="px-5" id="table">
-                    <table class="table">
+                    <table class="">
                         <thead>
                             <tr>
                                 <th class="py-3 px-5">Fullname</th>

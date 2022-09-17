@@ -188,7 +188,7 @@ table{
 }
 table thead{
     background: darkblue;
-    height: 100px;
+    height: 10px;
     color: white;
     position: sticky;
     left: 0;

@@ -134,7 +134,7 @@ $exam_result = $sth->fetchAll(PDO::FETCH_ASSOC);
                                         <!--BEGIN RIBBONS-->
 
                                         <!-- BEGIN: SHEET AREA -->
-                                        <div class="sheet-area p-5">
+                                        <div class="sheet-area p-5" id="sheet-area">
                                             <div class="row">
                                                 <div class="col">
                                                     <table class="table table-sm table-striped table-hover exams-table">
@@ -151,13 +151,13 @@ $exam_result = $sth->fetchAll(PDO::FETCH_ASSOC);
                                                         </thead>
                                                         <tbody class="exams-table-body">
                                                             <?php if (!empty($exam_result)) : ?>
-                                                                <?php foreach($exam_result as $res): ?>
-                                                                <tr>
-                                                                    <th scope="row"><?= $res['title']; ?></th>
-                                                                    <td><?= $res['score']; ?></td>
-                                                                    <td><?= Utils::DateFmt($res['date'], "F-d-Y"); ?></td>
-                                                                    <td><?= $res['remarks']; ?></td>
-                                                                </tr>
+                                                                <?php foreach ($exam_result as $res) : ?>
+                                                                    <tr>
+                                                                        <th scope="row"><?= $res['title']; ?></th>
+                                                                        <td><?= $res['score']; ?></td>
+                                                                        <td><?= Utils::DateFmt($res['date'], "F-d-Y"); ?></td>
+                                                                        <td><?= $res['remarks']; ?></td>
+                                                                    </tr>
                                                                 <?php endforeach; ?>
                                                             <?php endif; ?>
                                                         </tbody>
@@ -185,7 +185,7 @@ $exam_result = $sth->fetchAll(PDO::FETCH_ASSOC);
                                     <i class="material-icons-outlined me-2">library_books</i>
                                     <span>Add New Record</span>
                                 </h5>
-                                <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+                                <button type="button" class="btn-close btn-close-record" data-mdb-dismiss="modal" aria-label="Close"></button>
                             </div>
 
                             <!-- BEGIN: WINDOW CONTENTS-->
@@ -283,9 +283,9 @@ $exam_result = $sth->fetchAll(PDO::FETCH_ASSOC);
 
     <script>
         var records_window = undefined;
+        var isAddingNew = false;
 
-        $(document).ready(() => 
-        {
+        $(document).ready(() => {
             if ($("#input_key").val() == "") {
                 window.location.replace("teacher-landing-page.php");
             }
@@ -296,59 +296,75 @@ $exam_result = $sth->fetchAll(PDO::FETCH_ASSOC);
             records_window = new mdb.Modal(document.getElementById('add-records-modal'), []);
 
             // Modal click on SAVE button
-            $(".btn-save-record").click(() => { 
+            $(".btn-save-record").click(function(e) {
+                var isValid = $(e.target).parents('form').isValid();
+                if (!isValid) {
+                    e.preventDefault(); //prevent the default action
+                }
+                // $(".form-exam-records").submit(function(e)
+                // {
+                //     e.target.reportValidity();
+                // })  
                 SaveRecord();
             });
             // Modal click on CANCEL button
-            $(".btn-cancel-record").click(() => { 
+            $(".btn-cancel-record").click(() => {
+                ClearRecordsWindow();
+            });
+            $(".btn-close-record").click(() => {
                 ClearRecordsWindow();
             });
 
-            function SaveRecord() 
-            {
-                $.post("ajax.add-exam-record.php", 
-                {
-                    'csrf-token': $("#csrf-token").val(),
-                    'record_title': $("#record_title").val(),
-                    'date_taken': $("#input_date_taken").val(),
-                    'score': $("#input_score").val(),
-                    'remarks': $("#input_remarks").val(),
-                    'input_key': $("#input_key").val(),
-                    'user_key': $("#user_key").val(),
-                },
-                function(data, status) 
-                {
-                    ClearRecordsWindow();
+            function SaveRecord() {
+                isAddingNew = true;
 
-                    $.each(data, function(k, v) 
-                    {
-                        if (k = "response") {
-                            alert(v);
-                        }
+                $.post("ajax.add-exam-record.php", {
+                        'csrf-token': $("#csrf-token").val(),
+                        'record_title': $("#record_title").val(),
+                        'date_taken': $("#input_date_taken").val(),
+                        'score': $("#input_score").val(),
+                        'remarks': $("#input_remarks").val(),
+                        'input_key': $("#input_key").val(),
+                        'user_key': $("#user_key").val(),
+                    },
+                    function(data, status) {
+                        ClearRecordsWindow();
 
-                        if (k == "new-token") {
-                            $("#csrf-token").val(v)
-                        } 
-                    });
-                })
+                        $.each(data, function(k, v) {
+                            if (k == "response") {
+                                alert(v);
+                            }
+
+                            if (k == "new-token") {
+                                $("#csrf-token").val(v)
+                            }
+                        });
+                    })
             }
 
-            function ClearRecordsWindow()
-            {
+            function ClearRecordsWindow() {
+                isAddingNew = false;
                 records_window.hide();
                 $(".form-exam-records").trigger("reset");
             }
             //
             // Load the table every 8millisecs
             //
-            function BindRecordsToTable()
-            {
-                setInterval(LoadRecords, 800);
+            function BindRecordsToTable() {
+                setInterval(LoadRecords, 1800);
             }
 
-            function LoadRecords()
+            function LoadRecords() 
             {
-                console.log('itworkx');
+                if (isAddingNew)
+                    return;
+
+                $.post("ajax.get-exam-record.php", {
+                    'input_key': $("#input_key").val()
+                },
+                function(data, status) {
+
+                });
             }
 
             // (MDB) Intercept form submissions if there are invalid fields

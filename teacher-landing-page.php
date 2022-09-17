@@ -179,7 +179,7 @@ require_once("includes/teachers.students-mgt.php");
                     <div class="entries-pagination-tracker">
                         <h5>Showing <?= $currentPageIndex; ?> of <?= $totalPages ?> entries</h5>
                     </div>
-                    <table class="table">
+                    <table class="table table-sm">
                         <thead>
                             <tr>
                                 <th class="d-none"></th>
