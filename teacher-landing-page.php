@@ -35,11 +35,7 @@ $firstName = $res['firstname'];
 //######################################
 require_once("includes/teachers.students-mgt.php");
 
-
-// foreach($students_table as $s)
-// {
-//     echo "{$s['id']} -> {$s['student_lrn']} <br>";
-// }
+ 
 ?>
 
 <!DOCTYPE html>
@@ -292,6 +288,7 @@ require_once("includes/teachers.students-mgt.php");
             { 
                 var key = $(this).closest("tr").find("td:eq(0)").text();
                 $("#input_key").val(key);
+                 
                 $("#submit_key").click();
             })
         });
@@ -308,7 +305,7 @@ require_once("includes/teachers.students-mgt.php");
     </script>
 
     <form action="teacher-selected-student.php" method="POST">
-        <input type="hidden" name="input_key" id="input_key" value="">
+        <input type="hidden" name="input_key" id="input_key">
         <input type="submit" name="submit_key" id="submit_key" class="d-none" value="">
     </form>
 </body>

@@ -1,22 +1,67 @@
 <?php
 date_default_timezone_set("Asia/Manila");
 require_once "includes/autoloader.inc.php";
+include_once 'includes/http-referer.inc.php';
+
+session_start();
+
+//######################################
+// REGION: TEACHER's INFORMATION
+//######################################
+
+// Load the login cookie
+$authCookie = Auth::LoadAuthCookie();
+
+// If there is no cookie, force login
+if (empty($authCookie)) {
+    Utils::RedirectTo("login.php");
+    exit;
+}
+//
+// Load the user's (teacher) information
+//
+$this_users_id = array("id" => $authCookie["userid"]);
+
+$res = Singleton::GetDbHelperInstance()->SelectRow_Where(Constants::$TEACHERS_TABLE, $this_users_id, true);
+
+if (empty($res)) {
+    // Failed to load teacher's data
+    Utils::RedirectTo("404.php");
+    exit;
+}
+
+//######################################
+// REGION: STUDENT's INFORMATION
+//######################################
 
 $lrn_key = Utils::INPUT("input_key");
 
-$exam_query = "SELECT e.exam_subject AS 
-'subject', e.exam_score AS 'score', e.exam_date AS 'date', 
-CONCAT(t.firstname, ' ', t.middlename, ' ', t.lastname) AS 'administered', e.remarks AS 'remarks' 
-FROM `exams` e 
-left join students s on s.student_lrn = e.student_lrn 
-LEFT JOIN teachers t on e.teacher_id = t.id 
-WHERE s.student_lrn =?";
+// $exam_query = "SELECT e.exam_subject AS 
+// 'subject', e.exam_score AS 'score', e.exam_date AS 'date', 
+// CONCAT(t.firstname, ' ', t.middlename, ' ', t.lastname) AS 'administered', e.remarks AS 'remarks' 
+// FROM `exams` e 
+// left join students s on s.student_lrn = e.student_lrn 
+// LEFT JOIN teachers t on e.teacher_id = t.id 
+// WHERE s.student_lrn =?";
+
+$exam_query = "SELECT 
+
+x.record_title AS 'title',
+x.record_date AS 'date',
+x.score AS 'score',
+x.remarks AS 'remarks' 
+
+FROM `exam_record_sheet` x 
+left JOIN teachers t on t.id = x.teacher_id 
+left join students s on s.student_lrn = x.student_lrn 
+where x.teacher_id = ? and x.student_lrn = ?";
 
 $db = Singleton::GetDbHelperInstance();
 
 $sth = $db->Pdo->prepare($exam_query);
-$sth->execute([Utils::Reveal($lrn_key)]);
+$sth->execute([$authCookie["userid"], Utils::Reveal($lrn_key)]);
 $exam_result = $sth->fetchAll(PDO::FETCH_ASSOC);
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -92,26 +137,28 @@ $exam_result = $sth->fetchAll(PDO::FETCH_ASSOC);
                                         <div class="sheet-area p-5">
                                             <div class="row">
                                                 <div class="col">
-                                                    <table class="table table-sm bg-dark text-light table-striped table-hover exams-table">
-                                                        <thead>
+                                                    <table class="table table-sm table-striped table-hover exams-table">
+                                                        <thead class="bg-dark text-light ">
                                                             <tr>
                                                                 <!-- <th class="fw-bold" scope="col">LRN</th> -->
                                                                 <th class="fw-bold" scope="col">Record Name</th>
                                                                 <th class="fw-bold">Score</th>
-                                                                <th class="fw-bold">Proficiency</th>
-                                                                <th class="fw-bold">Date</th>
+                                                                <!-- <th class="fw-bold">Proficiency</th> -->
+                                                                <th class="fw-bold">Date Taken</th>
                                                                 <!-- <th scope="col">Retake</th> -->
                                                                 <th class="fw-bold">Remarks</th>
                                                             </tr>
                                                         </thead>
                                                         <tbody class="exams-table-body">
                                                             <?php if (!empty($exam_result)) : ?>
+                                                                <?php foreach($exam_result as $res): ?>
                                                                 <tr>
-                                                                    <th></th>
-                                                                    <td></td>
-                                                                    <td></td>
-                                                                    <td></td>
+                                                                    <th scope="row"><?= $res['title']; ?></th>
+                                                                    <td><?= $res['score']; ?></td>
+                                                                    <td><?= Utils::DateFmt($res['date'], "F-d-Y"); ?></td>
+                                                                    <td><?= $res['remarks']; ?></td>
                                                                 </tr>
+                                                                <?php endforeach; ?>
                                                             <?php endif; ?>
                                                         </tbody>
                                                     </table>
@@ -145,9 +192,11 @@ $exam_result = $sth->fetchAll(PDO::FETCH_ASSOC);
                             <div class="modal-body">
                                 <div class="row">
                                     <div class="col px-4 mb-3">
-                                        <form action="" method="POST" class="needs-validation" novalidate>
+                                        <form action="" method="POST" class="needs-validation form-exam-records" novalidate>
+                                            <input type="hidden" name="user_key" id="user_key" value="<?= Utils::Obfuscate($authCookie["userid"]); ?>">
                                             <input type="hidden" name="input_key" id="input_key" value="<?= $lrn_key; ?>">
-                                            <button type="submit-record" class="d-none" id="submit-record" name="submit-record"></button>
+                                            <input type="hidden" name="csrf-token" id="csrf-token" value="<?= IHttpReferer::GenerateCsrfToken(); ?>">
+                                            <!-- <button type="submit-record" class="d-none" id="submit-record" name="submit-record"></button> -->
 
                                             <!--BEGIN: RECORD TITLE-->
                                             <div class="row">
@@ -170,7 +219,7 @@ $exam_result = $sth->fetchAll(PDO::FETCH_ASSOC);
                                             <div class="row mb-4">
                                                 <div class="col">
                                                     <div class="form-outline">
-                                                        <input type="date" id="input_date_taken" name="input_date_taken" class="form-control bg-light" required value='<?php echo date('Y-m-d', strtotime($res["birthday"])) ?>' />
+                                                        <input type="date" id="input_date_taken" name="input_date_taken" class="form-control bg-light" required />
                                                         <label class="form-label" for="input_date_taken">Date Taken</label>
                                                         <div class="invalid-feedback">Please add a valid date.</div>
                                                     </div>
@@ -215,7 +264,7 @@ $exam_result = $sth->fetchAll(PDO::FETCH_ASSOC);
                             </div>
                             <!-- END: WINDOW CONTENTS-->
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Cancel</button>
+                                <button type="button" class="btn btn-secondary btn-cancel-records" data-mdb-dismiss="modal">Cancel</button>
                                 <button type="button" class="btn btn-primary btn-save-record">Save Record</button>
                             </div>
                         </div>
@@ -233,29 +282,77 @@ $exam_result = $sth->fetchAll(PDO::FETCH_ASSOC);
     <script src="lib/mdb/js/mdb.min.js"></script>
 
     <script>
-        var mdb_modal = undefined;
+        var records_window = undefined;
 
         $(document).ready(() => 
         {
-            // Initialize Modal Box
-            mdb_modal = new mdb.Modal(document.getElementById('add-records-modal'), []);
-
-            // Modal click on SAVE button
-            $(".btn-save-record").click(() => {
-                // CLicking on the save button triggers the submit button
-                $("#submit-record").click();
-            });
-
-            function SaveRecord()
-            {
-                $.post("", {
-
-                });
+            if ($("#input_key").val() == "") {
+                window.location.replace("teacher-landing-page.php");
             }
 
-            // Intercept form submissions if there are invalid fields
-            (() => 
+            BindRecordsToTable();
+
+            // Initialize Modal Box
+            records_window = new mdb.Modal(document.getElementById('add-records-modal'), []);
+
+            // Modal click on SAVE button
+            $(".btn-save-record").click(() => { 
+                SaveRecord();
+            });
+            // Modal click on CANCEL button
+            $(".btn-cancel-record").click(() => { 
+                ClearRecordsWindow();
+            });
+
+            function SaveRecord() 
             {
+                $.post("ajax.add-exam-record.php", 
+                {
+                    'csrf-token': $("#csrf-token").val(),
+                    'record_title': $("#record_title").val(),
+                    'date_taken': $("#input_date_taken").val(),
+                    'score': $("#input_score").val(),
+                    'remarks': $("#input_remarks").val(),
+                    'input_key': $("#input_key").val(),
+                    'user_key': $("#user_key").val(),
+                },
+                function(data, status) 
+                {
+                    ClearRecordsWindow();
+
+                    $.each(data, function(k, v) 
+                    {
+                        if (k = "response") {
+                            alert(v);
+                        }
+
+                        if (k == "new-token") {
+                            $("#csrf-token").val(v)
+                        } 
+                    });
+                })
+            }
+
+            function ClearRecordsWindow()
+            {
+                records_window.hide();
+                $(".form-exam-records").trigger("reset");
+            }
+            //
+            // Load the table every 8millisecs
+            //
+            function BindRecordsToTable()
+            {
+                setInterval(LoadRecords, 800);
+            }
+
+            function LoadRecords()
+            {
+                console.log('itworkx');
+            }
+
+            // (MDB) Intercept form submissions if there are invalid fields
+            (() => {
                 'use strict';
 
                 // Fetch all the forms we want to apply custom Bootstrap validation styles to

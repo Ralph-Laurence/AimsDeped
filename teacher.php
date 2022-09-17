@@ -180,25 +180,9 @@ require_once("includes/teachers.students-mgt.php");
                 </div> 
               
             </div>
-<<<<<<< Updated upstream
 
             <!-- TABLE -->
             <div class="table_container mt-4 d-flex flex-grow-1 position-relative table-sm">
-=======
-            
-            <!-- TABS -->
-            <ul class="nav nav-tabs px-5 mt-3 mt-md-1" id="myTab" role="tablist">
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="true">All Students</button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="false">Selected Students</button>
-                </li>
-            </ul>
-            <div class="table_container d-flex flex-grow-1 position-relative">
-                
-                <!-- TABLE -->
->>>>>>> Stashed changes
                 <div class="px-5" id="table">
                     <!-- <div class="entries-pagination-tracker">
                         <h5>Showing <?= $currentPageIndex; ?> of <?= $totalPages ?> entries</h5>

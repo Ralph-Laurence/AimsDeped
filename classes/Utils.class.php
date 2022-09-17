@@ -42,7 +42,7 @@ class Utils
         {
             if (empty($v))
             {
-                echo $k . " is empty";
+                // echo $k . " is empty";
                 return $k;
             }
         }
