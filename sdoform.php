@@ -41,7 +41,7 @@ if(empty($_POST["user_name"])){
       href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap"
     />
     <!-- MDB -->
-    <link rel="stylesheet" href="css/mdb.min.css" />
+    <link rel="stylesheet" href="lib/mdb/css/mdb.min.css" />
   </head>
   <body>
     <!-- Start your project here-->
