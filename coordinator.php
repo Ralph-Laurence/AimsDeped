@@ -75,12 +75,12 @@ $teachers = $teachers_sql->fetchAll(PDO::FETCH_ASSOC);
                         <span>Student Management</span>
                     </a>
                 </li>
-                <li class="d-flex align-items-center px-4">
+                <!-- <li class="d-flex align-items-center px-4">
                     <a class="text-decoration-none" href="">
                         <i class="material-icons-sharp">badge</i>
                         <span>Marks</span>
                     </a>
-                </li>
+                </li> -->
             </ul>
 
             <!-- DIVIDER / SEPARATOR LINE -->

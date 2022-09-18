@@ -110,12 +110,12 @@ require_once("includes/teachers.students-mgt.php");
                         <span>My Sections</span>
                     </a>
                 </li> -->
-                <li class="d-flex align-items-center px-4">
+                <!-- <li class="d-flex align-items-center px-4">
                     <a class="text-decoration-none w-100" href="exam-record.php">
                         <i class="material-icons-sharp">badge</i>
                         <span>Exams</span>
                     </a>
-                </li>
+                </li> -->
             </ul>
 
             <!-- DIVIDER / SEPARATOR LINE -->

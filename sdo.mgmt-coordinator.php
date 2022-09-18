@@ -48,6 +48,12 @@ $schools = $db->SelectAll(Constants::$SCHOOLS_TABLE);
 <body>
     <!-- Start your project here-->
     <div class="container my-5">
+        <div class="row mb-3">
+            <div class="col d-flex flex-row-reverse">
+                <a href="logout.php" class="btn btn-danger">Logout</a>
+                <button class="btn btn-primary me-3">Import from CSV</button> 
+            </div>
+        </div>
         <div class="card">
             <form method="POST" action="<?php echo $_SERVER["PHP_SELF"]; ?>" autocomplete="off" class="needs-validation" novalidate>
 
