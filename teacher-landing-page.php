@@ -104,12 +104,12 @@ require_once("includes/teachers.students-mgt.php");
                         </span>
                     </a>
                 </li>
-                <li class="d-flex align-items-center px-4">
+                <!-- <li class="d-flex align-items-center px-4">
                     <a class="text-decoration-none w-100" href="section-handles.php">
                         <i class="material-icons-outlined">meeting_room</i>
                         <span>My Sections</span>
                     </a>
-                </li>
+                </li> -->
                 <li class="d-flex align-items-center px-4">
                     <a class="text-decoration-none w-100" href="exam-record.php">
                         <i class="material-icons-sharp">badge</i>
@@ -222,24 +222,29 @@ require_once("includes/teachers.students-mgt.php");
                                                         <option disabled selected>Select Teacher</option>
                                                         <?php foreach ($teachers_result as $t) : ?>
 
-                                                            <option <?= ($s['TeachersId'] == $t["id"]) ? "selected" : " "; ?> 
-                                                            value="<?= Utils::Obfuscate($t['id']) ?>"><?= $t['teacher']; ?></option>
+                                                            <option <?= ($s['TeachersId'] == $t["id"]) ? "selected" : " "; ?> value="<?= Utils::Obfuscate($t['id']) ?>"><?= $t['teacher']; ?></option>
 
                                                         <?php endforeach; ?>
-                                                    </select> 
+                                                    </select>
                                                 </form>
-                                            <?php else: ?>
+                                            <?php else : ?>
                                                 <?= "No teachers listed"; ?>
                                             <?php endif; ?>
                                         </td>
                                         <td class="py-3 px-5">
                                             <?php if ($s['TeacherInCharge'] != "" && $s['TeachersId'] == $authCookie["userid"]) : ?>
-                                                <button class="btn btn-info view-button">View</button>
-                                                <form action="action.deselect-student.php" method="POST">
-                                                    <input type="hidden" name="student-key" value="<?= Utils::Obfuscate($s['LRN']); ?>">
-                                                    <input type="hidden" name="teacher-key" value="<?= Utils::Obfuscate($authCookie["userid"]); ?>">
-                                                    <button type="submit" class="btn btn-warning deselect-button">Deselect</button>
-                                                </form>
+                                                <div class="row">
+                                                    <div class="col-4">
+                                                        <button class="btn btn-info view-button me-2">View</button>
+                                                    </div>
+                                                    <div class="col">
+                                                        <form action="action.deselect-student.php" method="POST">
+                                                            <input type="hidden" name="student-key" value="<?= Utils::Obfuscate($s['LRN']); ?>">
+                                                            <input type="hidden" name="teacher-key" value="<?= Utils::Obfuscate($authCookie["userid"]); ?>">
+                                                            <button type="submit" class="btn btn-warning deselect-button">Disown</button>
+                                                        </form>
+                                                    </div>
+                                                </div>
                                             <?php endif; ?>
                                         </td>
                                     </tr>
