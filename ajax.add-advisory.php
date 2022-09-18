@@ -61,9 +61,10 @@ if ($hasEmptyValues)
     WriteResponse("Submit failed! The required fields are incomplete or you may have entered an invalid value. Please try again.");
     exit;
 }
- 
+  
 $db = Singleton::GetDbHelperInstance();
-$update = $db -> UpdateWhereEquals(Constants::$TEACHER_HANDLES_TABLE, )
+$update = $db -> Pdo -> prepare("UPDATE {Constants::$TEACHER_HANDLES_TABLE} SET ")
+//$update = $db -> UpdateWhereEquals(Constants::$TEACHER_HANDLES_TABLE, $advisory_data, )
 //$insert = $db -> InsertRow(Constants::$EXAM_RECORDS_TABLE, $exam_data);
 
 // $resp_msg = (!$insert) ? "Failed to record data." : "Record successfully added!";
@@ -84,5 +85,5 @@ $update = $db -> UpdateWhereEquals(Constants::$TEACHER_HANDLES_TABLE, )
 //     exit();
 // }
 
-echo Utils::Reveal(Utils::INPUT("input_key"));
+// echo Utils::Reveal(Utils::INPUT("input_key"));
 ?>

@@ -1,4 +1,12 @@
 <?php
+require_once "includes/autoloader.inc.php";
+$db = Singleton::GetDbHelperInstance();
+
+$teachers_table = Constants::$TEACHERS_TABLE;
+
+$teachers_sql = $db->Pdo->prepare("SELECT * FROM $teachers_table ORDER BY lastname");
+$teachers_sql->execute();
+$teachers = $teachers_sql->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
 
@@ -60,10 +68,10 @@
                             <span>Teacher Management</span>
                         </span>
                     </a>
-                </li> 
+                </li>
                 <li class="d-flex align-items-center px-4">
                     <a class="text-decoration-none" href="teacher_my-classroom.php">
-                    <i class="material-icons-sharp">groups</i>
+                        <i class="material-icons-sharp">groups</i>
                         <span>Student Management</span>
                     </a>
                 </li>
@@ -100,12 +108,13 @@
         <div class="content">
             <nav class="px-4 py-1 d-flex justify-content-center px-5 bg-white" id="nav_top">
                 <div class="top_container px-3 d-flex justify-content-between align-items-center">
-                    <span>Total Teachers : </span>
+                    <span>Total Teachers : <?= count($teachers); ?></span>
 
                     <div class="d-flex align-items-center">
-                        <button class="py-2 px-3 btn_csv" id="import_csv">Import CSV</button> 
+                        <a href="coordinator.create-teacher.php" class="py-2 px-3 btn btn-success me-3">Create Teacher</a>
+                        <button class="py-2 px-3 btn_csv" id="import_csv">Import CSV</button>
                         <input type="file" id="import_csv_file" class="d-none">
-                        
+
                         <a href="logout.php" class="px-2 text-decoration-none d-none d-md-block" id="logout_btn">
                             <i class="fa-solid fa-power-off" class="logout_btn_icon"></i>
                             Logout
@@ -123,20 +132,20 @@
                         <p>Here are the list of teachers in the system.</p>
                     </div>
                     <div class="row">
-                    <div class="col">
-                        <div class="search flex d-flex align-items-center">
-                            <input type="text" placeholder="Enter student name" class="px-4 py-2" id="search_field">
-                            <button id="search_submit">
-                                <i class="fa-solid fa-magnifying-glass"></i>
-                            </button>
+                        <div class="col">
+                            <div class="search flex d-flex align-items-center">
+                                <input type="text" placeholder="Find Teacher" class="px-4 py-2" id="search_field">
+                                <button id="search_submit">
+                                    <i class="fa-solid fa-magnifying-glass"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col d-flex align-items-center justify-content-end">
+
                         </div>
                     </div>
-                    <div class="col d-flex align-items-center justify-content-end">
-                       
-                    </div>
                 </div>
-                </div> 
-                
+
             </div>
 
             <!-- TABS -->
@@ -157,19 +166,44 @@
                     <table class="">
                         <thead>
                             <tr>
-                                <th class="py-3 px-5">Fullname</th>
+                                <th class="d-none"></th>
+                                <th class="py-3 px-5">Lastname</th>
+                                <th class="py-3 px-5">Middlename</th>
+                                <th class="py-3 px-5">Firstname</th>
                                 <th class="py-3 px-5">Username</th>
-                                <th class="py-3 px-5">Password</th>
-                                <th class="py-3 px-5">Grant Access</th>
+                                <!-- <th class="py-3 px-5">Password</th> -->
+                                <th class="py-3 px-5">Has Access</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
+                            <?php if (!empty($teachers)) : ?>
+                                <?php foreach ($teachers as $t) : ?>
+                                    <tr>
+                                        <td class="d-none"><?= $t['id']; ?></td>
+                                        <td class="py-3 px-5"><?= $t['lastname']; ?></td>
+                                        <td class="py-3 px-5"><?= $t['middlename']; ?></td>
+                                        <td class="py-3 px-5"><?= $t['firstname']; ?></td>
+                                        <td class="py-3 px-5"><?= $t['username']; ?></td>
+                                        <!-- <td class="py-3 px-5"><= $t['password']; ?></td> -->
+                                        <td class="py-3 px-5">
+                                            <form action="action.grant-teacher.php" method="POST" onchange="this.submit()">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" name="grant-checkbox" id="grant-checkbox" <?= ($t['chmod'] == 777) ? "checked" : " " ?>/>
+                                                    <label class="form-check-label" for="flexCheckChecked"><?= ($t['chmod'] == 777) ? "Allowed" : "Not Allowed" ?></label>
+                                                </div>
+                                                <input type="hidden" name="teacher-key" value="<?= Utils::Obfuscate($t['id']); ?>">
+                                            </form>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
+
+                            <!-- <tr>
                                 <td class="py-3 px-5">Katherine Lucero Decena</td>
                                 <td class="py-3 px-5">katherinedecena</td>
                                 <td class="py-3 px-5">password1234</td>
                                 <td class="py-3 px-5"><input type="checkbox"></td>
-                            </tr>
+                            </tr> -->
                         </tbody>
                     </table>
                 </div>
@@ -177,18 +211,18 @@
                 <div class="px-5" id="pagination_container">
                     <div class="row">
                         <div class="col">
-                            
-                            <span>Showing 
+
+                            <!-- <span>Showing
                                 <span class="current_page_index"> 1 </span>
-                                of  
+                                of
                                 <span class="end_page_index"> 4 </span>
                                 entries
-                            </span>
+                            </span> -->
 
                         </div>
-                        <div class="col d-flex justify-content-end">
+                        <!-- <div class="col d-flex justify-content-end">
                             First
-                        </div>
+                        </div> -->
                     </div>
                 </div>
             </div>
@@ -245,7 +279,7 @@
             $("#import_csv_file").click()
         })
 
-        
+
 
         function toggleOpen(el) {
             el.removeClass('fa-bars')
@@ -262,4 +296,5 @@
     </script>
 
 </body>
+
 </html>

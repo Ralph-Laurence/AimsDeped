@@ -1,1 +1,2 @@
 ErrorDocument 404 http://localhost/projects/aimsdeped/404.php 
+ErrorDocument 403 http://localhost/projects/aimsdeped/403.php 

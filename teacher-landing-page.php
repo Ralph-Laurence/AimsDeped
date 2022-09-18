@@ -34,7 +34,7 @@ $firstName = $res['firstname'];
 // Masterlist of teachers
 //
 $db = Singleton::GetDbHelperInstance();
-$get_teachers = $db->Pdo->prepare("SELECT id, CONCAT(firstname, ' ', middlename, ', ', lastname) AS 'teacher' FROM `teachers`");
+$get_teachers = $db->Pdo->prepare("SELECT id, CONCAT(lastname, ', ', firstname, ' ', middlename) AS 'teacher' FROM `teachers`");
 $get_teachers->execute();
 $teachers_result = $get_teachers->fetchAll(PDO::FETCH_ASSOC) ?: [];
 
@@ -235,7 +235,11 @@ require_once("includes/teachers.students-mgt.php");
                                         <td class="py-3 px-5">
                                             <?php if ($s['TeacherInCharge'] != "" && $s['TeachersId'] == $authCookie["userid"]) : ?>
                                                 <button class="btn btn-info view-button">View</button>
-                                                <button class="btn btn-warning deselect-button">Deselect</button>
+                                                <form action="action.deselect-student.php" method="POST">
+                                                    <input type="hidden" name="student-key" value="<?= Utils::Obfuscate($s['LRN']); ?>">
+                                                    <input type="hidden" name="teacher-key" value="<?= Utils::Obfuscate($authCookie["userid"]); ?>">
+                                                    <button type="submit" class="btn btn-warning deselect-button">Deselect</button>
+                                                </form>
                                             <?php endif; ?>
                                         </td>
                                     </tr>

@@ -42,6 +42,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submit"]))
             // We will use this to save the record id for future usage
             $flag_userId = -1;
 
+            // We will use this to check if the teacher can access the system
+            $chmod = 0;
+
             // The SDO table first
             $sdo_table = $db -> SelectRow_Where(Constants::$SDO_TABLE, $credential, true);
 
@@ -64,6 +67,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submit"]))
             if (!empty($teachers_table)) {
                 $flag_userType = 2; 
                 $flag_userId = $teachers_table["id"];
+                $chmod = $teachers_table['chmod'];
             } 
             
             // The STUDENTS table
@@ -94,7 +98,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submit"]))
                         Utils::RedirectTo("coordinator.php");
                         break;
                     case 2:
-                        Utils::RedirectTo("teacher-landing-page.php");
+                        if ($chmod > 600)
+                        {
+                            Utils::RedirectTo("teacher-landing-page.php");
+                        }
+                        else
+                        {
+                            Utils::RedirectTo("403.php");
+                        }
                         break;
                     case 3:
                         Utils::RedirectTo("student-profile.php");
@@ -110,29 +121,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submit"]))
 
             $login_err++;
             $login_err_msg = "Incorrect username or password";
-            // $cond = array
-            // (
-            //     ["student_lrn" => $username],
-            //     ["lastname" => $password]
-            // );
-            // $res = Singleton::GetDbHelperInstance() -> SelectAll_Where("students", $cond, true);
-
-
-            // $_SESSION["Username"] = $res["username"];
-            // $_SESSION["UserRole"] = $res["role"];
-            // $_SESSION["UserLevel"] = Utils::GetRoleString($res["role"]); 
-
-            // We expect the correct combination of username and password has been found
-            if (!empty($res)) {
-                // $_SESSION["Username"] = $res["student_lrn"]; 
-                // $_SESSION["UserLevel"] = "student";
-
-                // Utils::RedirectTo("edit-student-profile.php");
-                // Utils::RedirectTo("home.php");
-            } else {
-                
-                //exit;
-            }
+             
         } catch (Exception $e) {
             echo ("Oops something went wrong.<br><br/>" . $e->getMessage());
             exit;
