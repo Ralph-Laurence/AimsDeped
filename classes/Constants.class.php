@@ -19,6 +19,7 @@ class Constants
     public static string $STUDENTS_TABLE = "students";
     public static string $EXAM_RECORDS_TABLE = "exam_record_sheet";
     public static string $TEACHER_HANDLES_TABLE = "teacher_student_handles";
+    public static string $SCHOOLS_TABLE = "schools";
 }
 
 ?>
