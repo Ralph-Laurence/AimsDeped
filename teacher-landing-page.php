@@ -221,8 +221,8 @@ require_once("includes/teachers.students-mgt.php");
                                                     <select name="select-teacher" class="form-select" aria-label="Select Teacher" onchange="this.form.submit()">
                                                         <option disabled selected>Select Teacher</option>
                                                         <?php foreach ($teachers_result as $t) : ?>
-
-                                                            <option <?= ($s['TeachersId'] == $t["id"]) ? "selected" : " "; ?> value="<?= Utils::Obfuscate($t['id']) ?>"><?= $t['teacher']; ?></option>
+                                                            
+                                                            <option <?= (!empty($s['TeachersId']) && $s['TeachersId'] == $t["id"]) ? "selected" : " "; ?> value="<?= Utils::Obfuscate($t['id']) ?>"><?= $t['teacher']; ?></option>
 
                                                         <?php endforeach; ?>
                                                     </select>
@@ -243,6 +243,12 @@ require_once("includes/teachers.students-mgt.php");
                                                             <input type="hidden" name="teacher-key" value="<?= Utils::Obfuscate($authCookie["userid"]); ?>">
                                                             <button type="submit" class="btn btn-warning deselect-button">Disown</button>
                                                         </form>
+                                                    </div>
+                                                </div>
+                                            <?php elseif (empty($s['TeacherInCharge'])): ?>
+                                                <div class="row">
+                                                    <div class="col">
+                                                         <div class="rouded bg-danger rounded p-2 d-inline text-light ">Floating Student</div>
                                                     </div>
                                                 </div>
                                             <?php endif; ?>
