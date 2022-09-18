@@ -93,7 +93,7 @@ require_once("includes/get-exam-records.inc.php");
                     </a>
                 </li>
                 <li class="d-flex align-items-center">
-                    <a class="text-decoration-none w-100" href="teacher.php">
+                    <a class="text-decoration-none w-100" href="teacher-landing-page.php">
                         <span class="px-4">
                             <i class="material-icons-sharp">groups</i>
                             <span>Students</span>

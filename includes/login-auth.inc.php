@@ -94,7 +94,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submit"]))
                         Utils::RedirectTo("coordinator.php");
                         break;
                     case 2:
-                        Utils::RedirectTo("teacher.php");
+                        Utils::RedirectTo("teacher-landing-page.php");
                         break;
                     case 3:
                         Utils::RedirectTo("student-profile.php");

@@ -23,8 +23,9 @@ if (empty($userId) || empty($gradingPeriod) || empty($subject))
     return;
 }
 
+$handles = Constants::$TEACHER_HANDLES_TABLE;
 $exam_query = "select * from exams e
-left join teacher_section_handles h on h.section_id = e.section_id
+left join $handles h on h.section_id = e.section_id
 left join teachers t on h.teacher_id = t.id 
 left join students s on s.student_lrn = e.student_lrn
 where t.id =? and e.exam_subject = h.subject_assign and e.exam_quarter =?

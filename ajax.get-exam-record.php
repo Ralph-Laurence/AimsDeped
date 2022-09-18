@@ -28,7 +28,9 @@ if (empty($authCookie)) {
     exit;
 } 
 
-$lrn_key = Utils::INPUT("input_key");
+$lrn = Utils::Reveal(Utils::INPUT("input_key"));
+$teacher_id = Utils::Reveal(Utils::INPUT("user_key"));
+
 
 $exam_query = "SELECT 
 
@@ -45,9 +47,46 @@ where x.teacher_id = ? and x.student_lrn = ?";
 $db = Singleton::GetDbHelperInstance();
 
 $sth = $db->Pdo->prepare($exam_query);
-$sth->execute([$authCookie["userid"], Utils::Reveal($lrn_key)]);
+$sth->execute([$teacher_id, $lrn]);
 $exam_result = $sth->fetchAll(PDO::FETCH_ASSOC);
+ 
+$result_sets = "";
+ 
+foreach ($exam_result as $res) 
+{
+    $date = Utils::DateFmt($res['date'], "F-d-Y");
 
-echo "xxx";
+    $data = "<tr> 
+                    <th scope=\"row\">{$res['title']}</th>
+                    <th>{$res['score']}</th>
+                    <th>{$date}</th>
+                    <th>{$res['remarks']}</th>
+                </tr>";
 
+    $result_sets .= $data;
+}  
+
+header('Content-Type: application/json');
+echo json_encode($result_sets, true);
+exit;
+
+//echo $result_sets;
+// header('Content-Type: application/json');
+// echo json_encode($result_sets, true);
+// exit;
+//WriteResponse($response_result_sets);
+
+// function WriteResponse($msg)
+// {
+//     // Store responses here
+//     $response_result_sets = array(
+//         //"new-token" => IHttpReferer::GenerateCsrfToken(), // refresh new csrf token
+//         "response" => $msg
+//     );
+
+//     // We will return json as response
+//     header('Content-Type: application/json');
+//     echo json_encode($response_result_sets, true);
+//     exit();
+// }
 ?>

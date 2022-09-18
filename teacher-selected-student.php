@@ -36,14 +36,7 @@ if (empty($res)) {
 
 $lrn_key = Utils::INPUT("input_key");
 
-// $exam_query = "SELECT e.exam_subject AS 
-// 'subject', e.exam_score AS 'score', e.exam_date AS 'date', 
-// CONCAT(t.firstname, ' ', t.middlename, ' ', t.lastname) AS 'administered', e.remarks AS 'remarks' 
-// FROM `exams` e 
-// left join students s on s.student_lrn = e.student_lrn 
-// LEFT JOIN teachers t on e.teacher_id = t.id 
-// WHERE s.student_lrn =?";
-
+ 
 $exam_query = "SELECT 
 
 x.record_title AS 'title',
@@ -150,16 +143,16 @@ $exam_result = $sth->fetchAll(PDO::FETCH_ASSOC);
                                                             </tr>
                                                         </thead>
                                                         <tbody class="exams-table-body">
-                                                            <?php if (!empty($exam_result)) : ?>
-                                                                <?php foreach ($exam_result as $res) : ?>
+                                                            <!-- <php if (!empty($exam_result)) : ?>
+                                                                <php foreach ($exam_result as $res) : ?>
                                                                     <tr>
-                                                                        <th scope="row"><?= $res['title']; ?></th>
-                                                                        <td><?= $res['score']; ?></td>
-                                                                        <td><?= Utils::DateFmt($res['date'], "F-d-Y"); ?></td>
-                                                                        <td><?= $res['remarks']; ?></td>
+                                                                        <th scope="row"><= $res['title']; ?></th>
+                                                                        <td><= $res['score']; ?></td>
+                                                                        <td><= Utils::DateFmt($res['date'], "F-d-Y"); ?></td>
+                                                                        <td><= $res['remarks']; ?></td>
                                                                     </tr>
-                                                                <?php endforeach; ?>
-                                                            <?php endif; ?>
+                                                                <php endforeach; ?>
+                                                            <php endif; ?> -->
                                                         </tbody>
                                                     </table>
                                                 </div>
@@ -196,7 +189,7 @@ $exam_result = $sth->fetchAll(PDO::FETCH_ASSOC);
                                             <input type="hidden" name="user_key" id="user_key" value="<?= Utils::Obfuscate($authCookie["userid"]); ?>">
                                             <input type="hidden" name="input_key" id="input_key" value="<?= $lrn_key; ?>">
                                             <input type="hidden" name="csrf-token" id="csrf-token" value="<?= IHttpReferer::GenerateCsrfToken(); ?>">
-                                            <!-- <button type="submit-record" class="d-none" id="submit-record" name="submit-record"></button> -->
+                                            <button type="submit-record" class="d-none" id="submit-record" name="submit-record"></button>
 
                                             <!--BEGIN: RECORD TITLE-->
                                             <div class="row">
@@ -272,6 +265,47 @@ $exam_result = $sth->fetchAll(PDO::FETCH_ASSOC);
                 </div>
                 <!-- END: ADD EXAMS WINDOW -->
 
+                <!--BEGIN: MESSAGEBOX MODALS-->
+                <!-- <div class="modal fade info-box" id="info-box" tabindex="-1" aria-labelledby="info-boxLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title d-flex align-items-center" id="info-boxLabel">
+                                    <span class="material-icons-outlined me-3">info</span>
+                                    <span id="info-box-title">Alert</span>
+                                </h5>
+                                <button type="button" class="btn-close me-2" data-mdb-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body info-box-body">...</div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-mdb-dismiss="info-box">Close</button>
+                                <button type="button" class="btn btn-primary" data-mdb-dismiss="info-box">OK</button>
+                            </div>
+                        </div>
+                    </div>
+                </div> -->
+
+                <!-- Modal -->
+                <div class="modal fade" id="info-boxModal" tabindex="-1" aria-labelledby="info-boxModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title d-flex align-items-center" id="info-boxModalLabel">
+                                    <span class="material-icons-outlined me-3">info</span>
+                                    <span id="info-box-title">Alert</span>
+                                </h5> 
+                                <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body info-boxModalBody"></div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-primary" data-mdb-dismiss="modal">OK</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--END: MESSAGEBOX MODALS-->
+
             </div>
         </div>
         <!--BEGIN: STRETCH FULL CONTAINER HEIGHT-->
@@ -283,28 +317,31 @@ $exam_result = $sth->fetchAll(PDO::FETCH_ASSOC);
 
     <script>
         var records_window = undefined;
-        var isAddingNew = false;
+        var info_box = undefined;
 
         $(document).ready(() => {
             if ($("#input_key").val() == "") {
                 window.location.replace("teacher-landing-page.php");
             }
 
+            // Load initial rows on page load
             BindRecordsToTable();
 
             // Initialize Modal Box
             records_window = new mdb.Modal(document.getElementById('add-records-modal'), []);
+            info_box = new mdb.Modal(document.getElementById('info-boxModal'), []);
 
             // Modal click on SAVE button
             $(".btn-save-record").click(function(e) {
-                var isValid = $(e.target).parents('form').isValid();
+                var isValid = $(".form-exam-records")[0].checkValidity();
+
                 if (!isValid) {
+                    $("#submit-record").click();
                     e.preventDefault(); //prevent the default action
+                    //alert("Invalid") 
+                    return;
                 }
-                // $(".form-exam-records").submit(function(e)
-                // {
-                //     e.target.reportValidity();
-                // })  
+
                 SaveRecord();
             });
             // Modal click on CANCEL button
@@ -316,8 +353,6 @@ $exam_result = $sth->fetchAll(PDO::FETCH_ASSOC);
             });
 
             function SaveRecord() {
-                isAddingNew = true;
-
                 $.post("ajax.add-exam-record.php", {
                         'csrf-token': $("#csrf-token").val(),
                         'record_title': $("#record_title").val(),
@@ -330,41 +365,40 @@ $exam_result = $sth->fetchAll(PDO::FETCH_ASSOC);
                     function(data, status) {
                         ClearRecordsWindow();
 
-                        $.each(data, function(k, v) {
-                            if (k == "response") {
-                                alert(v);
-                            }
+                        if (data) {
+                            $.each(data, function(k, v) {
+                                if (k == "response") {
+                                    ShowMsgBox("Information", v);
+                                    //alert(v);
+                                }
 
-                            if (k == "new-token") {
-                                $("#csrf-token").val(v)
-                            }
-                        });
+                                if (k == "new-token") {
+                                    $("#csrf-token").val(v)
+                                }
+                            });
+
+                            BindRecordsToTable();
+                        }
                     })
             }
 
-            function ClearRecordsWindow() {
-                isAddingNew = false;
-                records_window.hide();
-                $(".form-exam-records").trigger("reset");
-            }
-            //
-            // Load the table every 8millisecs
-            //
-            function BindRecordsToTable() {
-                setInterval(LoadRecords, 1800);
-            }
-
-            function LoadRecords() 
+            function ClearRecordsWindow() 
             {
-                if (isAddingNew)
-                    return;
+                records_window.hide();
 
-                $.post("ajax.get-exam-record.php", {
-                    'input_key': $("#input_key").val()
-                },
-                function(data, status) {
-
-                });
+                $("#record_title").val('');
+                $("#input_date_taken").val(new Date());
+                $("#input_score").val('');
+                $("#input_remarks").val('');
+                // $(".form-exam-records").trigger("reset");
+            }
+            //
+            // Messagebox
+            //
+            function ShowMsgBox(title, msg) {
+                $("#info-box-title").text(title);
+                $(".info-boxModalBody").text(msg);
+                info_box.show();
             }
 
             // (MDB) Intercept form submissions if there are invalid fields
@@ -386,6 +420,22 @@ $exam_result = $sth->fetchAll(PDO::FETCH_ASSOC);
                 });
             })();
         });
+
+        //
+        // 
+        // 
+        function BindRecordsToTable() {
+            $.post("ajax.get-exam-record.php", {
+                    'input_key': $("#input_key").val(),
+                    'user_key': $("#user_key").val()
+                },
+                function(data) {
+                    // console.log(data);
+                    if (data) {
+                        $(".exams-table-body").html(data);
+                    }
+                });
+        }
     </script>
 </body>
 

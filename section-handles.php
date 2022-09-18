@@ -36,11 +36,12 @@ $db = Singleton::GetDbHelperInstance();
 
 
 // SELECT ALL SECTIONS THAT BELONG TO THIS TEACHER
+$handles = Constants::$TEACHER_HANDLES_TABLE;
 $sql_get_sects = "SELECT 
 h.subject_assign AS 'subjectName', 
 g.level AS 'section',
 COUNT(*) AS 'total' FROM `students` s 
-LEFT JOIN teacher_section_handles h on s.section_id = h.section_id
+LEFT JOIN $handles h on s.section_id = h.section_id
 LEFT JOIN `grade_section` g ON g.id = h.section_id
 WHERE h.teacher_id =?
 group by h.section_id";
@@ -110,7 +111,7 @@ $card_backgrounds = [
                     </a>
                 </li>
                 <li class="d-flex align-items-center">
-                    <a class="text-decoration-none w-100" href="teacher.php">
+                    <a class="text-decoration-none w-100" href="teacher-landing-page.php">
                         <span class="px-4">
                             <i class="material-icons-sharp">groups</i>
                             <span>Students</span>

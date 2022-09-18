@@ -94,7 +94,7 @@ require_once("includes/teachers.students-mgt.php");
                     </a>
                 </li>
                 <li class="active d-flex align-items-center">
-                    <a class="text-decoration-none w-100" href="#!">
+                    <a class="text-decoration-none w-100" href="teacher-landing-page.php">
                         <span class="px-4">
                             <i class="material-icons-sharp">groups</i>
                             <span>Students</span>

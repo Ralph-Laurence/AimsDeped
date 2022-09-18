@@ -30,12 +30,20 @@ if (empty($res)) {
 $firstName = $res['firstname'];
 
 
+//
+// Masterlist of teachers
+//
+$db = Singleton::GetDbHelperInstance();
+$get_teachers = $db->Pdo->prepare("SELECT id, CONCAT(firstname, ' ', middlename, ', ', lastname) AS 'teacher' FROM `teachers`");
+$get_teachers->execute();
+$teachers_result = $get_teachers->fetchAll(PDO::FETCH_ASSOC) ?: [];
+
 //######################################
 // REGION: STUDENT's INFORMATION
 //######################################
 require_once("includes/teachers.students-mgt.php");
+// require_once("includes/change-teacher-onselect.action.php");
 
- 
 ?>
 
 <!DOCTYPE html>
@@ -174,7 +182,7 @@ require_once("includes/teachers.students-mgt.php");
 
 
             <!-- TABLE -->
-            <div class="table_container mt-4 d-flex flex-grow-1 position-relative table-sm">
+            <div class="table_container mt-2 d-flex flex-grow-1 position-relative table-sm">
                 <div class="px-5" id="table">
                     <div class="entries-pagination-tracker">
                         <h5>Showing <?= $currentPageIndex; ?> of <?= $totalPages ?> entries</h5>
@@ -185,8 +193,7 @@ require_once("includes/teachers.students-mgt.php");
                                 <th class="d-none"></th>
                                 <th class="py-3 px-5">LRN</th>
                                 <th class="py-3 px-5">Name</th>
-                                <th class="py-3 px-5">Grade & Section</th>
-                                <th class="py-3 px-5"></th>
+                                <!-- <th class="py-3 px-5">Grade & Section</th>  -->
                                 <th class="py-3 px-5">Teacher-in-charge</th>
                                 <th class="py-3 px-5">Action</th>
                             </tr>
@@ -206,10 +213,31 @@ require_once("includes/teachers.students-mgt.php");
                                         <td class="d-none"><?= Utils::Obfuscate($s['LRN']); ?></td>
                                         <td class="py-3 px-5"><?= $s['LRN']; ?></td>
                                         <td class="py-3 px-5"><?= $s["StudentName"] ?></td>
-                                        <td class="py-3 px-5"><?= $s['GradeSection']; ?></td>
-                                        <td class="py-3 px-5"></td>
-                                        <td class="py-3 px-5"><?= $s['TeacherInCharge'] ?></td>
-                                        <td class="py-3 px-5"></td>
+                                        <!-- <td class="py-3 px-5"><= $s['GradeSection']; ?></td>  -->
+                                        <td class="py-3 px-5">
+                                            <?php if (!empty($teachers_result)) : ?>
+                                                <form action="action.change-teacher-onselect.php" method="POST">
+                                                    <input type="hidden" name="student-row" value="<?= Utils::Obfuscate($s['LRN']); ?>">
+                                                    <select name="select-teacher" class="form-select" aria-label="Select Teacher" onchange="this.form.submit()">
+                                                        <option disabled selected>Select Teacher</option>
+                                                        <?php foreach ($teachers_result as $t) : ?>
+
+                                                            <option <?= ($s['TeachersId'] == $t["id"]) ? "selected" : " "; ?> 
+                                                            value="<?= Utils::Obfuscate($t['id']) ?>"><?= $t['teacher']; ?></option>
+
+                                                        <?php endforeach; ?>
+                                                    </select> 
+                                                </form>
+                                            <?php else: ?>
+                                                <?= "No teachers listed"; ?>
+                                            <?php endif; ?>
+                                        </td>
+                                        <td class="py-3 px-5">
+                                            <?php if ($s['TeacherInCharge'] != "" && $s['TeachersId'] == $authCookie["userid"]) : ?>
+                                                <button class="btn btn-info view-button">View</button>
+                                                <button class="btn btn-warning deselect-button">Deselect</button>
+                                            <?php endif; ?>
+                                        </td>
                                     </tr>
                                 <?php endforeach; ?>
                             <?php endif; ?>
@@ -282,24 +310,22 @@ require_once("includes/teachers.students-mgt.php");
 
 
     <script>
-        $(document).ready(function()
-        {
-            $("td").click(function()
-            { 
+        $(document).ready(function() {
+            // incase may error, revert to:
+            //  $("td").click(function()
+            $("td .view-button").click(function() {
                 var key = $(this).closest("tr").find("td:eq(0)").text();
                 $("#input_key").val(key);
-                 
+
                 $("#submit_key").click();
             })
         });
 
-        function GetCellValueOnClick()
-        {
-            $("td").click(function()
-            {
+        function GetCellValueOnClick() {
+            $("td").click(function() {
                 var rowIndex = $(this).closest("tr").index();
                 var colIndex = $(this).index();
-                alert("row index: " + rowIndex + "\nCol Index: " + colIndex); 
+                alert("row index: " + rowIndex + "\nCol Index: " + colIndex);
             })
         }
     </script>
