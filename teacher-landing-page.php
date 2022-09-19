@@ -34,7 +34,15 @@ $firstName = $res['firstname'];
 // Masterlist of teachers
 //
 $db = Singleton::GetDbHelperInstance();
-$get_teachers = $db->Pdo->prepare("SELECT id, CONCAT(lastname, ', ', firstname, ' ', middlename) AS 'teacher' FROM `teachers`");
+$get_teachers_sql = "SELECT 
+id, 
+CONCAT(lastname, ', ', firstname, ' ', middlename) AS 'teacher',
+s.school_id,
+s.school_name AS 'school'
+FROM `teachers` t
+LEFT JOIN `schools` s ON s.school_id = t.school_assigned";
+
+$get_teachers = $db->Pdo->prepare($get_teachers_sql); //("SELECT id, CONCAT(lastname, ', ', firstname, ' ', middlename) AS 'teacher' FROM `teachers`");
 $get_teachers->execute();
 $teachers_result = $get_teachers->fetchAll(PDO::FETCH_ASSOC) ?: [];
 

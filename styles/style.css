@@ -7,7 +7,8 @@ body{
 }
 #side_nav{
     position: relative;
-    background: darkblue;
+    /* background: darkblue; */
+    background-color: #03045e;
     min-width: 295px;
     max-width: 295px;
     transition: all 0.5s;
@@ -175,6 +176,10 @@ hr.h-color{
     height: 85%;
     overflow: auto;
 }
+/* STRIPE COLORS */
+#table tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
 table{
     position: absolute;
     top: 0;
@@ -187,7 +192,8 @@ table{
     background: white;
 }
 table thead{
-    background: darkblue;
+    /* background: darkblue; */
+    background-color: #03045e;
     height: 10px !important;
     color: white;
     position: sticky;

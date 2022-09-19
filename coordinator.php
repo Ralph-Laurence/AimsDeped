@@ -1,11 +1,70 @@
 <?php
 require_once "includes/autoloader.inc.php";
+
+// Load the login cookie
+$authCookie = Auth::LoadAuthCookie();
+
+// If there is no cookie, force login
+if (empty($authCookie)) {
+    Utils::RedirectTo("login.php");
+    exit;
+}
+
 $db = Singleton::GetDbHelperInstance();
+
+//
+// Load the user's (coordinator) information
+//
+$this_users_id = array("id" => $authCookie["userid"]);
+
+$coord_query = "SELECT 
+c.id,
+c.username,
+c.firstname,
+c.middlename,
+c.lastname,
+c.school_assigned,
+s.school_name AS 'school_name'
+FROM coordinators c
+LEFT JOIN schools s ON s.school_id = c.school_assigned
+WHERE id =?";
+
+$coord_sql = $db->Pdo->prepare($coord_query);
+$coord_sql -> execute([$authCookie["userid"]]);
+$coord_info = $coord_sql -> fetch(PDO::FETCH_ASSOC) ?: [];  //SelectRow_Where(Constants::$COORD_TABLE, $this_users_id, true);
+
+if (empty($coord_info)) {
+    // Failed to load user's data
+    Utils::RedirectTo("404.php");
+    exit;
+}
+//
+// We expect that all relevant info has been loaded
+// We can now continue with business logic...
+$coord_name = $coord_info['firstname'] . " " . $coord_info['middlename'] . " " . $coord_info['lastname'];
+$coord_id = $coord_info['id'];
+$coord_school_id = $coord_info['school_assigned'];
+$coord_school_name = $coord_info['school_name'];
 
 $teachers_table = Constants::$TEACHERS_TABLE;
 
-$teachers_sql = $db->Pdo->prepare("SELECT * FROM $teachers_table ORDER BY lastname");
-$teachers_sql->execute();
+// SHOW ONLY TEACHERS FROM COORDINATOR's OWN SCHOOL
+$query = "SELECT 
+id, 
+t.lastname, 
+t.firstname, 
+t.middlename,
+t.username,
+t.chmod,
+s.school_id,
+s.school_name AS 'school'
+FROM `teachers` t
+LEFT JOIN `schools` s ON s.school_id = t.school_assigned
+WHERE t.school_assigned =?
+ORDER BY t.lastname";
+
+$teachers_sql = $db->Pdo->prepare($query); //("SELECT * FROM $teachers_table ORDER BY lastname");
+$teachers_sql->execute([$coord_school_id]);
 $teachers = $teachers_sql->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
@@ -108,7 +167,14 @@ $teachers = $teachers_sql->fetchAll(PDO::FETCH_ASSOC);
         <div class="content">
             <nav class="px-4 py-1 d-flex justify-content-center px-5 bg-white" id="nav_top">
                 <div class="top_container px-3 d-flex justify-content-between align-items-center">
-                    <span>Total Teachers : <?= count($teachers); ?></span>
+                    <!-- <span>Total Teachers : <= count($teachers); ?></span> -->
+                    <div class="d-inline-flex align-items-center">
+                        <h5 class="d-inline-flex align-items-center">
+                            <span><?= $coord_name; ?></span>
+                            <i class="material-icons-sharp">arrow_right</i>
+                        </h5>
+                        <h5 class="text-muted fst-italic">School Coordinator</h5>
+                    </div>
 
                     <div class="d-flex align-items-center">
                         <a href="coordinator.create-teacher.php" class="py-2 px-3 btn btn-success me-3">Create Teacher</a>
@@ -128,8 +194,9 @@ $teachers = $teachers_sql->fetchAll(PDO::FETCH_ASSOC);
             <div class="mt-4 px-5">
                 <div class="d-md-flex justify-content-between align-items-center">
                     <div class="left">
-                        <h2>Welcome Coordinator! </h2>
-                        <p>Here are the list of teachers in the system.</p>
+                        <h3><?= $coord_school_name; ?></h3>
+                        <!-- <p>Here are the list of teachers in the system.</p> -->
+                        <p>Total Teachers : <?= count($teachers); ?></p>
                     </div>
                     <div class="row">
                         <div class="col">
@@ -172,7 +239,7 @@ $teachers = $teachers_sql->fetchAll(PDO::FETCH_ASSOC);
                                 <th class="py-3 px-5">Firstname</th>
                                 <th class="py-3 px-5">Username</th>
                                 <!-- <th class="py-3 px-5">Password</th> -->
-                                <th class="py-3 px-5">Has Access</th>
+                                <th class="py-3 px-5">Advisory</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -188,8 +255,8 @@ $teachers = $teachers_sql->fetchAll(PDO::FETCH_ASSOC);
                                         <td class="py-3 px-5">
                                             <form action="action.grant-teacher.php" method="POST" onchange="this.submit()">
                                                 <div class="form-check">
-                                                    <input class="form-check-input" type="checkbox" name="grant-checkbox" id="grant-checkbox" <?= ($t['chmod'] == 777) ? "checked" : " " ?>/>
-                                                    <label class="form-check-label" for="flexCheckChecked"><?= ($t['chmod'] == 777) ? "Allowed" : "Not Allowed" ?></label>
+                                                    <input class="form-check-input" type="checkbox" name="grant-checkbox" id="grant-checkbox" <?= ($t['chmod'] == 777) ? "checked" : " " ?> />
+                                                    <label class="form-check-label" for="flexCheckChecked"><?= ($t['chmod'] == 777) ? "With Advisory" : "None" ?></label>
                                                 </div>
                                                 <input type="hidden" name="teacher-key" value="<?= Utils::Obfuscate($t['id']); ?>">
                                             </form>
