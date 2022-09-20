@@ -196,7 +196,7 @@ require_once("includes/teachers.students-mgt.php");
                             <h4><?= $teacher_info['school_name']; ?></h4>
                         </div>
                         <div class="total-students-wrap">
-                            <p>Total Students: <?= $totalEntries ?></p>
+                            <p>Total Students: <?= $total_students_in_current_school; ?></p>
                         </div>
                     </div>
                 </div>
@@ -226,7 +226,7 @@ require_once("includes/teachers.students-mgt.php");
                             <!--BEGIN: SEARCHBAR-->
                             <div class="search-bar">
                                 <div class="input-group">
-                                    <input type="text" class="form-control" placeholder="Find Student" aria-label="Find Student" aria-describedby="search-icon">
+                                    <input type="text" class="form-control" placeholder="Find Student" aria-label="Find Student" aria-describedby="search-icon" data-toggle="tooltip" data-placement="top" title="Find a student by LRN or name.">
                                     <button class="btn btn-secondary material-icons-sharp" id="search-icon">search</button>
                                 </div>
                             </div>
@@ -410,10 +410,14 @@ require_once("includes/teachers.students-mgt.php");
             var action_disown_fired = 0;
             var seclected_paginator_index = <?= $currentPageIndex; ?>;
 
-            $(document).ready(function() {
+            $(document).ready(function() 
+            {
                 $(".alertbox").modal({
                     backdrop: 'static'
                 });
+                
+                $('[data-toggle="tooltip"]').tooltip();
+
                 // incase may error, revert to:
                 //  $("td").click(function()
                 $("td .view-button").click(function() {
@@ -422,8 +426,7 @@ require_once("includes/teachers.students-mgt.php");
 
                     $("#submit_key").click();
                 });
-
-                alert("Pos: " + GetPaginatedIndex() + "\n" + "filter: " + GetFilter());
+                // alert("Pos: " + GetPaginatedIndex() + "\n" + "filter: " + GetFilter());
             });
 
             function ShowInfo(title, msg) {
