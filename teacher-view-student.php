@@ -4,13 +4,9 @@ require_once "includes/autoloader.inc.php";
 include_once 'includes/http-referer.inc.php';
 
 session_start();
-
-//######################################
-// REGION: TEACHER's INFORMATION
-//######################################
-
+ 
 // Load the login cookie
-$authCookie = Auth::LoadAuthCookie();
+$authCookie = AuthSession::Load(); Auth::LoadAuthCookie();
 
 // If there is no cookie, force login
 if (empty($authCookie)) {
@@ -314,7 +310,6 @@ $exam_result = $sth->fetchAll(PDO::FETCH_ASSOC);
     <!--END: ROOT LAYOUT-->
     <script src="lib/jquery/jquery-3.6.1.min.js"></script>
     <script src="lib/mdb/js/mdb.min.js"></script>
-
     <script>
         var records_window = undefined;
         var info_box = undefined;

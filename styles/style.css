@@ -1,5 +1,15 @@
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500&family=Poppins:ital,wght@0,100;0,200;0,500;0,600;1,100;1,200&display=swap');
 
+*
+{
+    box-sizing: border-box;
+}
+
+:root
+{
+    --blue-override: #03045e;
+}
+
 body{
     background-color: #f9f9f9;
     color : #001233;
@@ -164,11 +174,11 @@ hr.h-color{
 .nav-tabs li button{
     color: darkblue;
 }
-.table_container{
+.old-table_container{
     position: relative;
     /* background: #000; */
 }
-#table{
+#old-table{
     position: absolute;
     top: 0;
     left: 0;
@@ -177,10 +187,10 @@ hr.h-color{
     overflow: auto;
 }
 /* STRIPE COLORS */
-#table tr:nth-child(even) {
+#old-table tr:nth-child(even) {
     background-color: #f2f2f2;
 }
-table{
+.old-table table{
     position: absolute;
     top: 0;
     bottom: 0;
@@ -191,7 +201,7 @@ table{
     font-size: 1rem;
     background: white;
 }
-table thead{
+.old-table table thead{
     /* background: darkblue; */
     background-color: #03045e;
     height: 10px !important;
@@ -200,10 +210,10 @@ table thead{
     left: 0;
     top: 0;
 }
-table thead tr th{
+.old-table table thead tr th{
     font-weight: 400;
 }
-table tbody tr td{
+.old-table table tbody tr td{
     font-weight: 500;
 }
 .tabs button{
@@ -279,22 +289,6 @@ table tbody tr td{
 
 
 
-
-.classroom-card-img {
-    background-image: url("../assets/img/card-bg.png");
-}
-
-.classroom-card-orange {
-    background-blend-mode: overlay;
-    background-color: rgba(255, 127, 39); 
-}
-
-.classroom-card-blue {
-    background-blend-mode: overlay;
-    background-color: #235A92; 
-}
-
-.classroom-card-purple {
-    background-blend-mode: overlay;
-    background-color: #563E8D; 
+.custom-bg-blue{
+    background-color: var(--blue-override);
 }

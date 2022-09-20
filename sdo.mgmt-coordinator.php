@@ -1,26 +1,24 @@
 <?php
 
-// if (empty($_POST["firstname"])) {
-//     $firstname_error = "Please Enter your Firstname";
-// }
-// if (empty($_POST["middlename"])) {
-//     $middlename_error = "Please Enter your Middlename";
-// }
-// if (empty($_POST["lastname"])) {
-//     $lastname_error = "Please Enter your Lastname";
-// }
-// if (empty($_POST["emailadd"])) {
-//     $email_error = "Please Enter your Email";
-// }
-// if (empty($_POST["ph_num"])) {
-//     $_error = "Please Enter your Phone Number";
-// }
-// if (empty($_POST["user_name"])) {
-//     $username_error = "Please Enter your username";
-// }
-
 require_once "includes/autoloader.inc.php";
 require_once "includes/sdo-create-coord.php";
+
+ 
+// Load the login cookie
+$authCookie = AuthSession::Load(); // Auth::LoadAuthCookie();
+
+// If there is no cookie, force login
+if (empty($authCookie)) {
+    Utils::RedirectTo("login.php");
+    exit;
+}
+
+// Make sure that only the SDO can access the system
+if ($authCookie[Constants::$SESSION_AUTH_USER_LEVEL] != Constants::$USER_LVL_SDO)
+{
+    Utils::RedirectTo("403.php");
+    exit;
+} 
 
 $db = Singleton::GetDbHelperInstance();
 $schools = $db->SelectAll(Constants::$SCHOOLS_TABLE);

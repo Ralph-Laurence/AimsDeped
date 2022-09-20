@@ -6,7 +6,7 @@ require_once 'includes/http-referer.inc.php';
 $isAjax = IHttpReferer::IsAjaxRequest();
   
 // Only give response when request came from our own url
-$ownUrl = IHttpReferer::IsRequestOwnUrl("teacher-selected-student.php");
+$ownUrl = IHttpReferer::IsRequestOwnUrl("teacher-view-student.php");
 
 $legitRequest = $isAjax && $ownUrl;
 
@@ -20,7 +20,7 @@ if (!$legitRequest)
 // REGION: TEACHER's INFORMATION
 //######################################
 // Load the login cookie
-$authCookie = Auth::LoadAuthCookie();
+$authCookie = AuthSession::Load();  //Auth::LoadAuthCookie();
 
 // If there is no cookie, force login
 if (empty($authCookie)) {

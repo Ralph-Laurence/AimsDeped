@@ -6,7 +6,7 @@ session_start();
 // Track for login failures
 $login_err = 0;
 $login_err_msg = "";
-
+ 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submit"])) 
 {
     // Input Values
@@ -42,15 +42,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submit"]))
             // We will use this to save the record id for future usage
             $flag_userId = -1;
 
-            // We will use this to check if the teacher can access the system
-            $chmod = 0;
-
             // The SDO table first
             $sdo_table = $db -> SelectRow_Where(Constants::$SDO_TABLE, $credential, true);
 
             if (!empty($sdo_table)) {
                 $flag_userType = 0; 
                 $flag_userId = $sdo_table["id"];
+
+                $_SESSION['login_request'] = Constants::$USER_LVL_SDO;
             }
 
             // The COORDINATORS table
@@ -59,6 +58,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submit"]))
             if (!empty($coord_table)) {
                 $flag_userType = 1; 
                 $flag_userId = $coord_table["id"];
+
+                $_SESSION['login_request'] = Constants::$USER_LVL_COORDINATOR;
             }
 
             // The TEACHERS table
@@ -67,7 +68,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submit"]))
             if (!empty($teachers_table)) {
                 $flag_userType = 2; 
                 $flag_userId = $teachers_table["id"];
-                $chmod = $teachers_table['chmod'];
+                
+                // We will use this to check if the teacher can access the system
+                $_SESSION['chmod'] = $teachers_table['chmod'];
+                $_SESSION['login_request'] = Constants::$USER_LVL_TEACHER;
             } 
             
             // The STUDENTS table
@@ -76,6 +80,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submit"]))
             if (!empty($students_table)) { 
                 $flag_userType = 3;
                 $flag_userId = $students_table["id"];
+
+                $_SESSION['login_request'] = Constants::$USER_LVL_STUDENT;
             }
 
             // echo "<br>Usertype: " . $flag_userType . "<br>";
@@ -86,7 +92,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submit"]))
             // We only generate cookie if login is successfull
             if ($flag_userType > -1)
             {
-                Auth::SetAuthCookie($username, $password, $flag_userId);
+                // Auth::SetAuthCookie($username, $password, $flag_userId); 
+                AuthSession::Set($username, $password, $flag_userId, $flag_userType);
 
                 // Identify which page should we redirect to
                 switch($flag_userType)
@@ -98,14 +105,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submit"]))
                         Utils::RedirectTo("coordinator.php");
                         break;
                     case 2:
-                        if ($chmod > 600)
-                        {
-                            Utils::RedirectTo("teacher-landing-page.php");
-                        }
-                        else
-                        {
-                            Utils::RedirectTo("403.php");
-                        }
+                        Utils::RedirectTo("teacher-landing-page.php");
                         break;
                     case 3:
                         Utils::RedirectTo("student-profile.php");

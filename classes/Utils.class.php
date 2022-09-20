@@ -83,6 +83,24 @@ class Utils
  
         return $r1;
     }
+
+    /**
+     * Get descriptive user level int to string equivalent
+     */
+    public static function GetDescriptiveUserLevel(int $level) : string
+    {
+        $desc = "";
+
+        switch ($level)
+        {
+            case 0: $desc = "SDO"; break;
+            case 1: $desc = "Coordinator"; break;
+            case 2: $desc = "Teacher"; break;
+            case 3: $desc = "Student"; break;
+        }
+
+        return $desc;
+    }
 }
 
 ?>

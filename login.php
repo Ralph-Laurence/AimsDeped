@@ -5,21 +5,28 @@
  
 require_once("includes/autoloader.inc.php");
 require_once("includes/login-auth.inc.php");
- 
-// $cookie = Auth::LoadAuthCookie();
-// $username = $cookie["username"];
-// echo $username;
 
-// if ($_SERVER["REQUEST_METHOD"] == "POST" && (!isset($_POST["input-userType"]) || strlen($_POST["input-userType"]) <= 0))
-// {
-//     header("Location: index.php");
-//     exit;
-// } 
-
-// if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["input-userType"]))
-//     $userMode = $_POST["input-userType"];
-  
-
+if (isset($_SESSION['login_request']) && $_SESSION['login_request'] > -1) 
+{
+    switch ($_SESSION['login_request']) {
+        case 0:
+            Utils::RedirectTo("sdoadmin.php");
+            break;
+        case 1:
+            Utils::RedirectTo("coordinator.php");
+            break;
+        case 2:
+            Utils::RedirectTo("teacher-landing-page.php");
+            break;
+        case 3:
+            Utils::RedirectTo("student-profile.php");
+            break;
+        default:
+            Utils::RedirectTo("login.php");
+            break;
+    }
+}
+   
 // BEGIN DOCUMENT LAYPUT
 $doc = Singleton::GetBoilerPlateInstance(); 
 $doc -> BeginHTML(); 

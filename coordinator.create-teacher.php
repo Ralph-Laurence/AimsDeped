@@ -4,6 +4,15 @@
 require_once "includes/autoloader.inc.php";
 require_once "includes/coord-create-teacher.php";
 
+// Load the login cookie
+$authCookie = AuthSession::Load(); //Auth::LoadAuthCookie();
+
+// If there is no cookie, force login
+if (empty($authCookie)) {
+    Utils::RedirectTo("login.php");
+    exit;
+}
+
 $db = Singleton::GetDbHelperInstance();
 $schools = $db->SelectAll(Constants::$SCHOOLS_TABLE);
 

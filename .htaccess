@@ -1,2 +1,10 @@
-ErrorDocument 404 http://localhost/projects/aimsdeped/404.php 
+ErrorDocument 400 http://localhost/projects/aimsdeped/400.php 
 ErrorDocument 403 http://localhost/projects/aimsdeped/403.php 
+ErrorDocument 404 http://localhost/projects/aimsdeped/404.php 
+ErrorDocument 408 http://localhost/projects/aimsdeped/408.php 
+ErrorDocument 500 http://localhost/projects/aimsdeped/500.php 
+
+RewriteEngine on
+
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [R=404,L]

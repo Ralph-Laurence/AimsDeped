@@ -2,13 +2,22 @@
 require_once "includes/autoloader.inc.php";
 
 // Load the login cookie
-$authCookie = Auth::LoadAuthCookie();
+$authCookie = AuthSession::Load(); //Auth::LoadAuthCookie();
 
 // If there is no cookie, force login
-if (empty($authCookie)) {
+// Also, make sthat we are really logging in as Coord
+if (empty($authCookie)) 
+{
     Utils::RedirectTo("login.php");
     exit;
-}
+} 
+ 
+// Make sure that only the coordinator can access the system
+if ($authCookie[Constants::$SESSION_AUTH_USER_LEVEL] != Constants::$USER_LVL_COORDINATOR)
+{
+    Utils::RedirectTo("403.php");
+    exit;
+} 
 
 $db = Singleton::GetDbHelperInstance();
 

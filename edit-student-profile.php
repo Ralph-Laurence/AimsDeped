@@ -4,20 +4,22 @@ require_once "includes/autoloader.inc.php";
 require_once "includes/update-student-profile.inc.php";
 
 session_start();
-
-// if (!isset($_SESSION["IsLoggedIn"]) || (!$_SESSION["IsLoggedIn"])) {
-//     Utils::RedirectTo("index.php"); 
-//     exit;
-// }
-
+ 
 // Load the login cookie
-$authCookie = Auth::LoadAuthCookie();
+$authCookie = AuthSession::Load(); //Auth::LoadAuthCookie();
 
 // If there is no cookie, force login
 if (empty($authCookie)) {
     Utils::RedirectTo("login.php");
     exit;
 }
+
+// Make sure that only the student can access the system
+if ($authCookie[Constants::$SESSION_AUTH_USER_LEVEL] != Constants::$USER_LVL_STUDENT)
+{
+    Utils::RedirectTo("403.php");
+    exit;
+} 
 
 $this_users_id = array("id" => $authCookie["userid"]);
 

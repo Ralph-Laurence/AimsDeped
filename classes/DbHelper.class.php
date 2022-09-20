@@ -162,67 +162,7 @@ class DbHelper
         $result = $sth -> fetchAll(PDO::FETCH_ASSOC) ?: [];
         return $result;
     }
-
-    /**
-     * Select All matching rows with matching EQUALS condition
-     * then returns and ASSOC ARRAY.
-     * 
-     * Use condition like: $cond = ["key1" => "val1", "key2" => "val2"];
-     */
-    /*
-    public function SelectAll_Where(string $table, array $conditions, bool $singleRow = false) : array
-    {   
-        $keys = []; 
-        $where = [];
-
-        $key_index = 0;
-
-        foreach($conditions as $conds)
-        {
-            foreach($conds as $k => $v)
-            { 
-                $param_name = "{$k}{$key_index}";
-                // Param names (p) must be the same as column names (c), but with different suffix
-                //                   c     p
-                array_push($where, "{$k}=:{$param_name}"); 
-                $keys[$key_index] = $param_name;
-
-                $key_index ++;
-            }
-        }
-
-        // reset key index
-        $key_index = 0;
-
-        $limit = $singleRow ? " LIMIT 1" : "";
-
-        // Build the query string
-        $sql = "SELECT * FROM {$table} WHERE " . join(" AND ", $where) . $limit;
-        // echo $sql . "<br>";
  
-        // Bind parameters
-        $sth = $this -> Pdo -> prepare($sql); 
-
-        foreach($conditions as $conds)
-        {
-            foreach($conds as $k => $v)
-            { 
-                // Get all individual keys and values
-                // Then bind them
-                $sth -> bindValue(":$keys[$key_index]", $v);
-                // echo "sth -> bindValue(':$keys[$key_index]', $v)";
-                $key_index ++;
-            }
-        }
-
-        $sth->execute();
- 
-        if ($singleRow)
-           return $sth ->fetch(PDO::FETCH_ASSOC) ?: [];
-        else
-            return $sth -> fetchAll(PDO::FETCH_ASSOC);  
-    }
-    */
 
     // INSERT SINGLE ROW
     public function InsertRow(string $table, array $data) : bool

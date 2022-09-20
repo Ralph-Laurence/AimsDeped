@@ -7,7 +7,7 @@ require_once 'includes/http-referer.inc.php';
 $isAjax = IHttpReferer::IsAjaxRequest();
   
 // Only give response when request came from our own url
-$ownUrl = IHttpReferer::IsRequestOwnUrl("teacher-selected-student.php");
+$ownUrl = IHttpReferer::IsRequestOwnUrl("teacher-view-student.php");
 
 $legitRequest = $isAjax && $ownUrl;
 

@@ -1,8 +1,10 @@
 academic_module/teacher_page_clone.html
-drawer.php
-test.php
-pagination.php
-draft.txt
-teacher_my-classroom.php
+dev-ignore/*
 ajax.php
+draft.txt
+drawer.php
+pagination.php
 teacher.php
+teacher_my-classroom.php
+test.php
+utos ni sir magnus.txt
