@@ -114,7 +114,7 @@ $teachers = $teachers_sql->fetchAll(PDO::FETCH_ASSOC);
             <!-- LINKS -->
             <ul class="list-unstyled px-2 pt-5 pb-2">
                 <li class="d-flex align-items-center">
-                    <a class="text-decoration-none w-100" href="">
+                    <a class="text-decoration-none w-100" href="dashboarding/dashboardcoor.html">
                         <span class="px-4">
                             <i class="material-icons-sharp">insights</i>
                             <span>Dashboard</span>

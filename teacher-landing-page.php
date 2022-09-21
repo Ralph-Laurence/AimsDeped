@@ -118,7 +118,7 @@ require_once("includes/teachers.students-mgt.php");
             <!-- LINKS -->
             <ul class="list-unstyled px-2 pt-5 pb-2">
                 <li class="d-flex align-items-center">
-                    <a class="text-decoration-none w-100" href="">
+                    <a class="text-decoration-none w-100" href="dashboarding/dashboardTeacher.html">
                         <span class="px-4">
                             <i class="material-icons-sharp">insights</i>
                             <span>Dashboard</span>
