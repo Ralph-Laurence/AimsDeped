@@ -25,7 +25,7 @@ if (empty($authCookie)) {
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['teacher_key'], $_POST['student_key'], $_POST['school_key']))
 { 
     $db = Singleton::GetDbHelperInstance();
-    
+
     $lrn = Utils::Reveal(Utils::INPUT("student_key"));
     $teacher_id = Utils::Reveal(Utils::INPUT('teacher_key'));
     $school_id = Utils::Reveal(Utils::INPUT("school_key"));
@@ -83,24 +83,5 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['teacher_key'], $_POST[
     }   
 }
  
-Utils::RedirectTo($referrer);
-//echo $result_sets;
-// header('Content-Type: application/json');
-// echo json_encode($result_sets, true);
-// exit;
-//WriteResponse($response_result_sets);
-
-// function WriteResponse($msg)
-// {
-//     // Store responses here
-//     $response_result_sets = array(
-//         //"new-token" => IHttpReferer::GenerateCsrfToken(), // refresh new csrf token
-//         "response" => $msg
-//     );
-
-//     // We will return json as response
-//     header('Content-Type: application/json');
-//     echo json_encode($response_result_sets, true);
-//     exit();
-// }
+Utils::RedirectTo($referrer); 
 ?>
