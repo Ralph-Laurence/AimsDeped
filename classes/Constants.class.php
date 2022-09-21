@@ -49,6 +49,17 @@ class Constants
      * STUDENT = 3
      */
     public static int $USER_LVL_STUDENT = 3;
+
+
+    // public static int $PROFXY_POOR = 1;
+    // public static int $PROFXY_WEAK = 2;
+    // public static int $PROFXY_GOOD = 3;
+    // public static int $PROFXY_VERY_GOOD = 4;
+    // public static int $PROFXY_EXCELLENT = 5;
+
+    public static int $PROFXY_BEGINNER = 1;
+    public static int $PROFXY_INTERMEDIATE = 2;
+    public static int $PROFXY_ADVANCED = 3;
 }
 
 ?>

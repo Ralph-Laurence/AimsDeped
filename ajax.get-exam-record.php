@@ -12,22 +12,10 @@ $legitRequest = $isAjax && $ownUrl;
 
 if (!$legitRequest) 
 {
-    WriteResponse("Ajax URL not found or invalid");
+    // WriteResponse("Ajax URL not found or invalid");
     Utils::RedirectTo("404.php");
 } 
- 
-//######################################
-// REGION: TEACHER's INFORMATION
-//######################################
-// Load the login cookie
-$authCookie = AuthSession::Load();  //Auth::LoadAuthCookie();
-
-// If there is no cookie, force login
-if (empty($authCookie)) {
-    Utils::RedirectTo("login.php");
-    exit;
-} 
-
+  
 $lrn = Utils::Reveal(Utils::INPUT("input_key"));
 $teacher_id = Utils::Reveal(Utils::INPUT("user_key"));
 

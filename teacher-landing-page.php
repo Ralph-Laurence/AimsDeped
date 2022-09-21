@@ -12,7 +12,10 @@ if (isset($_SESSION['chmod'])) {
 }
 
 // Load the login cookie
-$authCookie = AuthSession::Load(); // Auth::LoadAuthCookie();
+$authCookie = AuthSession::Load();  
+
+if (isset($_SESSION['temp_lrn']))
+    $_SESSION['temp_lrn'] = "";
 
 // If there is no cookie, force login
 if (empty($authCookie)) {
@@ -90,15 +93,11 @@ require_once("includes/teachers.students-mgt.php");
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- CSS only -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
-    <!-- JavaScript Bundle with Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-u1OknCvxWvY5kfmNBILK2hRnQC3Pr17a+RTT6rIHI7NnikvbZlHgTPOOmMi466C8" crossorigin="anonymous"></script>
-    <!-- Icon -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha512-xh6O/CkQoPOWDdYTDqeRdPCVd1SpvCA9XXcUnZS2FmJNp1coAFzvtCN9BmamE+4aHK8yyUHUSCcJHgXloTyT2A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link rel="stylesheet" href="styles/style.css">
-
+    
+    <link rel="stylesheet" href="lib/bs5/css/bootstrap.min.css">
+    <link rel="stylesheet" href="lib/font-awesome/css/all.min.css">
     <link rel="stylesheet" href="lib/material-design-icons/material-icons.css">
+    <link rel="stylesheet" href="styles/style.css"> 
 
     <title>Teacher's Page</title>
 </head>
@@ -269,10 +268,10 @@ require_once("includes/teachers.students-mgt.php");
                                 <thead class="bg-dark text-light top-0 position-sticky" style="z-index: 5;">
                                     <tr>
                                         <th class="d-none"></th>
-                                        <th class="py-3 px-5">LRN</th>
-                                        <th class="py-3 px-5">Name</th>
-                                        <th class="py-3 px-5">Teacher-in-charge</th>
-                                        <th class="py-3 px-5">Action</th>
+                                        <th class="py-2 px-5">LRN</th>
+                                        <th class="py-2 px-5">Name</th>
+                                        <th class="py-2 px-5">Adviser</th>
+                                        <th class="py-2 px-5">Action</th>
                                     </tr>
                                 </thead>
 
@@ -281,9 +280,9 @@ require_once("includes/teachers.students-mgt.php");
                                         <?php foreach ($students_table as $s) : ?>
                                             <tr>
                                                 <td class="d-none"><?= Utils::Obfuscate($s['LRN']); ?></td>
-                                                <td class="py-3 px-5"><?= $s['LRN']; ?></td>
-                                                <td class="py-3 px-5"><?= $s["StudentName"] ?></td>
-                                                <td class="py-3 px-5">
+                                                <td class="py-2 px-5 align-middle"><?= $s['LRN']; ?></td>
+                                                <td class="py-2 px-5 align-middle"><?= $s["StudentName"] ?></td>
+                                                <td class="py-2 px-5 align-middle align-middle">
                                                     <?php if (!empty($teachers_result)) : ?>
                                                         <form action="action.change-teacher-onselect.php" method="POST">
                                                             <input type="hidden" name="student-row" value="<?= Utils::Obfuscate($s['LRN']); ?>">
@@ -300,7 +299,7 @@ require_once("includes/teachers.students-mgt.php");
                                                         <?= "No teachers listed"; ?>
                                                     <?php endif; ?>
                                                 </td>
-                                                <td class="py-3 px-5">
+                                                <td class="py-2 px-5  align-middle">
                                                     <?php if ($s['TeacherInCharge'] != "" && $s['TeachersId'] == $authCookie["userid"]) : ?>
                                                         <div class="row">
                                                             <div class="col mt-1">
@@ -375,6 +374,8 @@ require_once("includes/teachers.students-mgt.php");
         <!--END: MODAL-->
 
         <!-- script -->
+        <script src="lib/popper.min.js"></script>
+        <script src="lib/bs5/js/bootstrap.min.js"></script>
         <script src="lib/jquery/jquery-3.6.1.min.js"></script>
         <!-- action for active link -->
         <script>
@@ -499,7 +500,7 @@ require_once("includes/teachers.students-mgt.php");
             }
         </script>
 
-        <form action="teacher-view-student.php" method="POST">
+        <form action="view-student.php" method="POST">
             <input type="hidden" name="input_key" id="input_key">
             <input type="submit" name="submit_key" id="submit_key" class="d-none" value="">
         </form>

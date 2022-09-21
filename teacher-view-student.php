@@ -1,55 +1,7 @@
 <?php
 date_default_timezone_set("Asia/Manila");
 require_once "includes/autoloader.inc.php";
-include_once 'includes/http-referer.inc.php';
-
-session_start();
  
-// Load the login cookie
-$authCookie = AuthSession::Load(); Auth::LoadAuthCookie();
-
-// If there is no cookie, force login
-if (empty($authCookie)) {
-    Utils::RedirectTo("login.php");
-    exit;
-}
-//
-// Load the user's (teacher) information
-//
-$this_users_id = array("id" => $authCookie["userid"]);
-
-$res = Singleton::GetDbHelperInstance()->SelectRow_Where(Constants::$TEACHERS_TABLE, $this_users_id, true);
-
-if (empty($res)) {
-    // Failed to load teacher's data
-    Utils::RedirectTo("404.php");
-    exit;
-}
-
-//######################################
-// REGION: STUDENT's INFORMATION
-//######################################
-
-$lrn_key = Utils::INPUT("input_key");
-
- 
-$exam_query = "SELECT 
-
-x.record_title AS 'title',
-x.record_date AS 'date',
-x.score AS 'score',
-x.remarks AS 'remarks' 
-
-FROM `exam_record_sheet` x 
-left JOIN teachers t on t.id = x.teacher_id 
-left join students s on s.student_lrn = x.student_lrn 
-where x.teacher_id = ? and x.student_lrn = ?";
-
-$db = Singleton::GetDbHelperInstance();
-
-$sth = $db->Pdo->prepare($exam_query);
-$sth->execute([$authCookie["userid"], Utils::Reveal($lrn_key)]);
-$exam_result = $sth->fetchAll(PDO::FETCH_ASSOC);
 
 ?>
 <!DOCTYPE html>
@@ -139,7 +91,7 @@ $exam_result = $sth->fetchAll(PDO::FETCH_ASSOC);
                                                             </tr>
                                                         </thead>
                                                         <tbody class="exams-table-body">
-                                                            <!-- <php if (!empty($exam_result)) : ?>
+                                                            <php if (!empty($exam_result)) : ?>
                                                                 <php foreach ($exam_result as $res) : ?>
                                                                     <tr>
                                                                         <th scope="row"><= $res['title']; ?></th>
@@ -148,7 +100,7 @@ $exam_result = $sth->fetchAll(PDO::FETCH_ASSOC);
                                                                         <td><= $res['remarks']; ?></td>
                                                                     </tr>
                                                                 <php endforeach; ?>
-                                                            <php endif; ?> -->
+                                                            <php endif; ?>
                                                         </tbody>
                                                     </table>
                                                 </div>
@@ -289,7 +241,7 @@ $exam_result = $sth->fetchAll(PDO::FETCH_ASSOC);
                                 <h5 class="modal-title d-flex align-items-center" id="info-boxModalLabel">
                                     <span class="material-icons-outlined me-3">info</span>
                                     <span id="info-box-title">Alert</span>
-                                </h5> 
+                                </h5>
                                 <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body info-boxModalBody"></div>
@@ -311,126 +263,125 @@ $exam_result = $sth->fetchAll(PDO::FETCH_ASSOC);
     <script src="lib/jquery/jquery-3.6.1.min.js"></script>
     <script src="lib/mdb/js/mdb.min.js"></script>
     <script>
-        var records_window = undefined;
-        var info_box = undefined;
+        // var records_window = undefined;
+        // var info_box = undefined;
 
-        $(document).ready(() => {
-            if ($("#input_key").val() == "") {
-                window.location.replace("teacher-landing-page.php");
-            }
+        // $(document).ready(() => {
+        //     if ($("#input_key").val() == "") {
+        //         window.location.replace("teacher-landing-page.php");
+        //     }
 
-            // Load initial rows on page load
-            BindRecordsToTable();
+        //     // Load initial rows on page load
+        //     BindRecordsToTable();
 
-            // Initialize Modal Box
-            records_window = new mdb.Modal(document.getElementById('add-records-modal'), []);
-            info_box = new mdb.Modal(document.getElementById('info-boxModal'), []);
+        //     // Initialize Modal Box
+        //     records_window = new mdb.Modal(document.getElementById('add-records-modal'), []);
+        //     info_box = new mdb.Modal(document.getElementById('info-boxModal'), []);
 
-            // Modal click on SAVE button
-            $(".btn-save-record").click(function(e) {
-                var isValid = $(".form-exam-records")[0].checkValidity();
+        //     // Modal click on SAVE button
+        //     $(".btn-save-record").click(function(e) {
+        //         var isValid = $(".form-exam-records")[0].checkValidity();
 
-                if (!isValid) {
-                    $("#submit-record").click();
-                    e.preventDefault(); //prevent the default action
-                    //alert("Invalid") 
-                    return;
-                }
+        //         if (!isValid) {
+        //             $("#submit-record").click();
+        //             e.preventDefault(); //prevent the default action
+        //             //alert("Invalid") 
+        //             return;
+        //         }
 
-                SaveRecord();
-            });
-            // Modal click on CANCEL button
-            $(".btn-cancel-record").click(() => {
-                ClearRecordsWindow();
-            });
-            $(".btn-close-record").click(() => {
-                ClearRecordsWindow();
-            });
+        //         SaveRecord();
+        //     });
+        //     // Modal click on CANCEL button
+        //     $(".btn-cancel-record").click(() => {
+        //         ClearRecordsWindow();
+        //     });
+        //     $(".btn-close-record").click(() => {
+        //         ClearRecordsWindow();
+        //     });
 
-            function SaveRecord() {
-                $.post("ajax.add-exam-record.php", {
-                        'csrf-token': $("#csrf-token").val(),
-                        'record_title': $("#record_title").val(),
-                        'date_taken': $("#input_date_taken").val(),
-                        'score': $("#input_score").val(),
-                        'remarks': $("#input_remarks").val(),
-                        'input_key': $("#input_key").val(),
-                        'user_key': $("#user_key").val(),
-                    },
-                    function(data, status) {
-                        ClearRecordsWindow();
+        //     function SaveRecord() {
+        //         $.post("ajax.add-exam-record.php", {
+        //                 'csrf-token': $("#csrf-token").val(),
+        //                 'record_title': $("#record_title").val(),
+        //                 'date_taken': $("#input_date_taken").val(),
+        //                 'score': $("#input_score").val(),
+        //                 'remarks': $("#input_remarks").val(),
+        //                 'input_key': $("#input_key").val(),
+        //                 'user_key': $("#user_key").val(),
+        //             },
+        //             function(data, status) {
+        //                 ClearRecordsWindow();
 
-                        if (data) {
-                            $.each(data, function(k, v) {
-                                if (k == "response") {
-                                    ShowMsgBox("Information", v);
-                                    //alert(v);
-                                }
+        //                 if (data) {
+        //                     $.each(data, function(k, v) {
+        //                         if (k == "response") {
+        //                             ShowMsgBox("Information", v);
+        //                             //alert(v);
+        //                         }
 
-                                if (k == "new-token") {
-                                    $("#csrf-token").val(v)
-                                }
-                            });
+        //                         if (k == "new-token") {
+        //                             $("#csrf-token").val(v)
+        //                         }
+        //                     });
 
-                            BindRecordsToTable();
-                        }
-                    })
-            }
+        //                     // BindRecordsToTable();
+        //                 }
+        //             })
+        //     }
 
-            function ClearRecordsWindow() 
-            {
-                records_window.hide();
+        //     function ClearRecordsWindow() {
+        //         records_window.hide();
 
-                $("#record_title").val('');
-                $("#input_date_taken").val(new Date());
-                $("#input_score").val('');
-                $("#input_remarks").val('');
-                // $(".form-exam-records").trigger("reset");
-            }
-            //
-            // Messagebox
-            //
-            function ShowMsgBox(title, msg) {
-                $("#info-box-title").text(title);
-                $(".info-boxModalBody").text(msg);
-                info_box.show();
-            }
+        //         $("#record_title").val('');
+        //         $("#input_date_taken").val(new Date());
+        //         $("#input_score").val('');
+        //         $("#input_remarks").val('');
+        //         // $(".form-exam-records").trigger("reset");
+        //     }
+        //     //
+        //     // Messagebox
+        //     //
+        //     function ShowMsgBox(title, msg) {
+        //         $("#info-box-title").text(title);
+        //         $(".info-boxModalBody").text(msg);
+        //         info_box.show();
+        //     }
 
-            // (MDB) Intercept form submissions if there are invalid fields
-            (() => {
-                'use strict';
+        //     // (MDB) Intercept form submissions if there are invalid fields
+        //     (() => {
+        //         'use strict';
 
-                // Fetch all the forms we want to apply custom Bootstrap validation styles to
-                const forms = document.querySelectorAll('.needs-validation');
+        //         // Fetch all the forms we want to apply custom Bootstrap validation styles to
+        //         const forms = document.querySelectorAll('.needs-validation');
 
-                // Loop over them and prevent submission
-                Array.prototype.slice.call(forms).forEach((form) => {
-                    form.addEventListener('submit', (event) => {
-                        if (!form.checkValidity()) {
-                            event.preventDefault();
-                            event.stopPropagation();
-                        }
-                        form.classList.add('was-validated');
-                    }, false);
-                });
-            })();
-        });
+        //         // Loop over them and prevent submission
+        //         Array.prototype.slice.call(forms).forEach((form) => {
+        //             form.addEventListener('submit', (event) => {
+        //                 if (!form.checkValidity()) {
+        //                     event.preventDefault();
+        //                     event.stopPropagation();
+        //                 }
+        //                 form.classList.add('was-validated');
+        //             }, false);
+        //         });
+        //     })();
+        // });
 
-        //
-        // 
-        // 
-        function BindRecordsToTable() {
-            $.post("ajax.get-exam-record.php", {
-                    'input_key': $("#input_key").val(),
-                    'user_key': $("#user_key").val()
-                },
-                function(data) {
-                    // console.log(data);
-                    if (data) {
-                        $(".exams-table-body").html(data);
-                    }
-                });
-        }
+        // //
+        // // 
+        // // 
+        // function BindRecordsToTable() {
+        //     $.post("ajax.get-exam-record.php", {
+        //             'input_key': $("#input_key").val(),
+        //             'user_key': $("#user_key").val()
+        //         },
+        //         function(data) {
+        //             // console.log(data);
+        //             if (data) {
+        //                 $(".exams-table-body").html(data);
+        //             }
+        //         });
+        // }
     </script>
 </body>
 
